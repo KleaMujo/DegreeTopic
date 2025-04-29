@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Add Degree Topic</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .dashboard-wrapper {
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e3e6f0;
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h4 {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 1.75rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(58, 59, 69, 0.1);
+        }
+
+        .input-group-text {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 45px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e3e6f0;
+            border-left: none;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #bac8f3;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea.form-control {
+            min-height: 120px;
+        }
+
+        .breadcrumb-path {
+            color: var(--dark-color);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .card-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        /* Animation for save button */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-save {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-save:hover {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-9 col-md-12">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb breadcrumb-path">
+                        <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#">Degree Management</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Add Degree Topic</li>
+                    </ol>
+                </nav>
+
+                <!-- Main Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title-wrapper">
+                            <h4><i class="fas fa-graduation-cap header-icon"></i> Add Degree Topic</h4>
+                            <div>
+                                <span class="badge bg-primary">New</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <form id="degreeTopicForm">
+                            <div class="form-group">
+                                <label class="form-label" for="title">Degree Topic Title</label>
+                                <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-book"></i>
+                                        </span>
+                                    <input required id="title" type="text" class="form-control" placeholder="Enter degree topic title" autocomplete="off">
+                                </div>
+                                <small class="text-muted">Enter a concise and descriptive title for the degree topic</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="description">Degree Topic Description</label>
+                                <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-align-left"></i>
+                                        </span>
+                                    <textarea required id="description" class="form-control" placeholder="Enter a detailed description of the degree topic" rows="4"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <button type="button" onclick="saveDegreeTopic()" class="btn btn-primary btn-save">
+                                    <i class="fas fa-save me-2"></i> Save Degree Topic
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function saveDegreeTopic(){
+        var title=document.getElementById("title").value;
+        var description=document.getElementById("description").value;
+
+        var degreeTopic={};
+        degreeTopic.titleDTO=title;
+        degreeTopic.descriptionDTO = description;
+
+        const ajaxCall = new Promise(resolve => {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                headers: { 'x-my-custom-header': 'some value' },
+                url: "/addDegreeTopic",
+                data: JSON.stringify(degreeTopic),
+                dataType: 'json',
+                cache: false,
+                timeout: 1500,
+                success: function () {
+                    resolve();
+                },
+                error: function () {
+                    resolve();
+                }
+            });
+        });
+
+    }
+</script>
+

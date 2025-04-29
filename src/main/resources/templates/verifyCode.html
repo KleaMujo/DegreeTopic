@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Code</title>
+</head>
+<body>
+<h1>Verify Code</h1>
+<p>A verification code has been sent to your email. Please enter it below to proceed.</p>
+<div>
+    <label for="code">Verification Code:</label>
+    <input type="text" id="code" name="code">
+    <button type="submit" onclick="verify2fa()">Verify</button>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+
+    function verify2fa() {
+        const enteredCode = document.getElementById("code").value;
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            headers: { 'x-my-custom-header': 'some value' },
+            url: "/verify2fa?enteredCode=" + enteredCode,
+            dataType: 'json',
+            cache: false,
+            success: function (response) {
+                if (response) {
+                    alert("success");
+                    window.location.href = "/";
+                } else {
+                    alert("invalid code");
+                }
+            },
+            error: function (response) {
+                alert("error");
+            }
+        });
+
+    }
+
+</script>
+</body>
+</html>

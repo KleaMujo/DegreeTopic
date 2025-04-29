@@ -1,0 +1,42 @@
+@Override
+public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+User user = userRepository.findByUsername(authentication.getName());
+String username = authentication.getName(); // Get the username
+String password = ((UsernamePasswordAuthenticationToken) authentication).getCredentials().toString(); // Get the password
+
+System.out.println("Username: " + username);
+System.out.println("Password: " + password);
+
+if (user.getUseTwoFa() != null && user.getUseTwoFa() == 1) {
+String email = user.getEmail(); // Get user's email
+String code = generateVerificationCode(); // Generate verification code
+
+System.out.println("verification code: " + code);
+
+//            emailService.sendVerificationCode(email, code);
+
+// Store the code in a session attribute or a database
+request.getSession().setAttribute("code", code);
+
+// Retrieve the authenticated user's roles from the SecurityContextHolder
+authentication = SecurityContextHolder.getContext().getAuthentication();
+Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+// Store the roles in the session attribute
+request.getSession().setAttribute("authorities", authorities);
+
+// Create an empty collection of authorities
+Collection<GrantedAuthority> emptyAuthorities = Collections.emptyList();
+
+    // Create a new Authentication object with the same principal and credentials, but with empty authorities
+    Authentication newAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), emptyAuthorities);
+
+    // Set the new Authentication object back to the security context
+    SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+    // Redirect to a page where the user can enter the code
+    response.sendRedirect("/verifyCode");
+    } else {
+    response.sendRedirect("/");
+    }
+    }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <style>
+        .failed {
+            color: red;
+        }
+        .loggedOut {
+            color: lightskyblue;
+        }
+        .loginDiv {
+            border: 1px solid black;
+            border-radius: 10px;
+            margin: 10% 35%;
+            background-color: #c98d8e;
+        }
+        .classDiv {
+            margin: 20px;
+            display: flex;
+            font-family: sans-serif;
+            font-size: larger;
+            color: white;
+            justify-content: center;
+        }
+        .label {
+            margin-right: 20px;
+            width: 20%;
+        }
+        .input {
+            width: 50%;
+            border-radius: 5px;
+        }
+        .button {
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px 20px;
+            font-size: medium;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+<form action="#" th:action="@{/authenticateTheUser}" method="POST">
+    <div class="loginDiv">
+        <!-- Check for login error -->
+        <div th:if="${param.error}">
+            <i class="failed">Sorry! You entered invalid username/password.</i>
+        </div>
+
+        <!-- Check for login error -->
+        <div th:if="${param.logout}">
+            <i class="loggedOut">You have been logged out.</i>
+        </div>
+
+        <div class="classDiv">
+            <div class="label">User Name: </div>
+            <input class="input" type="text" name="username" />
+        </div>
+
+        <div class="classDiv">
+            <div class="label">Password: </div>
+            <input class="input" type="password" name="password" />
+        </div>
+
+        <div class="classDiv">
+            <input class="button" type="submit" value="Login" />
+        </div>
+
+        <!-- Register Button -->
+        <div class="classDiv">
+            <a class="button" href="/register">Register</a> <!-- Link to register page -->
+        </div>
+    </div>
+</form>
+
+
+</body>
+</html>

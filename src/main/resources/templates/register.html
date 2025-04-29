@@ -1,0 +1,117 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+  <title>Login</title>
+
+  <style>
+    .failed {
+      color: red;
+    }
+    .loggedOut {
+      color: lightskyblue;
+    }
+    .loginDiv {
+      border: 1px solid black;
+      border-radius: 10px;
+      margin: 10% 35%;
+      background-color: #c98d8e;
+    }
+    .classDiv {
+      margin: 20px;
+      display: flex;
+      font-family: sans-serif;
+      font-size: larger;
+      color: white;
+      justify-content: center;
+    }
+    .label {
+      margin-right: 20px;
+      width: 20%;
+    }
+    .input {
+      width: 50%;
+      border-radius: 5px;
+    }
+    .button {
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 5px 20px;
+      font-size: medium;
+      background-color: white;
+    }
+  </style>
+
+  <!-- Add jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Optionally add SweetAlert2 for popups -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Optionally add Bootstrap JS for Bootstrap components -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<div>
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required />
+</div>
+
+<div>
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+</div>
+
+<div>
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required />
+</div>
+
+<div>
+  <label for="role">Role</label>
+  <select id="role">
+    <option value="student">Student</option>
+    <option value="professor">Professor</option>
+  </select>
+</div>
+
+<div>
+  <button type="button" onclick="register()">Register</button>
+</div>
+
+<script>
+  function register() {
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var role = document.getElementById("role").value;
+    var userDTO = {};
+    userDTO.usernameDTO = username;
+    userDTO.emailDTO = email;
+    userDTO.passwordDTO = password;
+    userDTO.roleDTO= role;
+
+    console.log("Sending data: ", userDTO);  // Debugging log
+
+    $.ajax({
+      type: "POST",
+      url: "/register",
+      contentType: "application/json",
+      data: JSON.stringify(userDTO),
+      success: function(response) {
+
+      },
+      error: function(xhr, status, error) {
+        console.log("Error:", status, error);
+      }
+    });
+
+
+  }
+</script>
+
+</body>
+</html>
