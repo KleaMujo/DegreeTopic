@@ -270,7 +270,7 @@
                                     </td>
                                     <td th:text="${p.getDescription()}"></td>
                                     <td th:text="${p.getTeacher()}"></td>
-                                    <td onclick="choose(this)" data-id="[[${p.getId()}]]"> Choose</td>
+                                    <td onclick="choose(this)" th:data-id="${p.id}">Choose</td>
                                     <td class="action-buttons">
                                         <button class="action-btn action-btn-view" title="View">
                                             <i class="fas fa-eye"></i>
