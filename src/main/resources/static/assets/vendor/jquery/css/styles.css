@@ -1,0 +1,280 @@
+/* Global Variables */
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #1cc88a;
+    --dark-color: #5a5c69;
+    --light-color: #f8f9fc;
+    --danger-color: #e74a3b;
+    --info-color: #36b9cc;
+    --border-color: #e3e6f0;
+    --shadow-color: rgba(58, 59, 69, 0.15);
+    --shadow-sm: 0 0.125rem 0.25rem rgba(58, 59, 69, 0.1);
+    --shadow-lg: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    --border-radius: 0.75rem;
+    --border-radius-sm: 0.35rem;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--light-color);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Layout Components */
+.dashboard-wrapper {
+    padding: 20px;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 30px;
+    background-color: #fff;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid var(--border-color);
+    padding: .75rem 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-header h4 {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.card-body {
+    padding: 1.75rem;
+}
+
+.card-title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-icon {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+/* Breadcrumb */
+.breadcrumb-path {
+    color: var(--dark-color);
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+/* Form Elements */
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.input-group-text {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    width: 45px;
+    display: flex;
+    justify-content: center;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-left: none;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #bac8f3;
+}
+
+.form-group textarea.form-control {
+    min-height: 120px;
+}
+
+/* Buttons */
+.btn-primary, .btn-add {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s;
+}
+
+.btn-primary:hover, .btn-add:hover {
+    background-color: #2e59d9;
+    transform: translateY(-2px);
+}
+
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.btn-add {
+    padding: 0.5rem 1rem;
+}
+
+/* Button animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.btn-save {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-save:hover {
+    animation: pulse 1s infinite;
+}
+
+/* Action buttons */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25rem;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+.action-btn-view {
+    background-color: var(--info-color);
+    color: white;
+}
+
+.action-btn-edit {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.action-btn-delete {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Table styling */
+.table {
+    margin-bottom: 0;
+    color: var(--dark-color);
+}
+
+.table thead th {
+    background-color: var(--light-color);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-color: var(--border-color);
+}
+
+.table-responsive {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table-bordered {
+    border: 1px solid var(--border-color);
+}
+
+/* Status indicator */
+.status-active {
+    background-color: var(--secondary-color);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+/* DataTables customization */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+    color: var(--dark-color);
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.375rem 0.75rem;
+    color: var(--dark-color);
+    margin-left: 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: var(--dark-color);
+    padding-top: 1rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: var(--border-radius-sm);
+    padding: 0.25rem 0.5rem;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--border-color);
+    margin-left: 0.25rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: 1px solid var(--primary-color);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #eaecf4 !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--border-color);
+}

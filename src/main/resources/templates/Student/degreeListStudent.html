@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Degree Topics</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .dashboard-wrapper {
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e3e6f0;
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h4 {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 1.75rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb-path {
+            color: var(--dark-color);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .card-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        /* Table styling */
+        .table {
+            margin-bottom: 0;
+            color: var(--dark-color);
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        .table td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-color: #e3e6f0;
+        }
+
+        .table-responsive {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .table-bordered {
+            border: 1px solid #e3e6f0;
+        }
+
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        .btn-add {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 0.35rem;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #2e59d9;
+            transform: translateY(-2px);
+        }
+
+        /* Status indicator */
+        .status-active {
+            background-color: #1cc88a;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        /* DataTables customization */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #e3e6f0;
+            border-radius: 0.35rem;
+            padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #e3e6f0;
+            border-radius: 0.35rem;
+            padding: 0.375rem 0.75rem;
+            color: var(--dark-color);
+            margin-left: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_info {
+            color: var(--dark-color);
+            padding-top: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-radius: 0.35rem;
+            padding: 0.25rem 0.5rem;
+            color: var(--primary-color) !important;
+            border: 1px solid #e3e6f0;
+            margin-left: 0.25rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border: 1px solid var(--primary-color);
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #eaecf4 !important;
+            color: var(--primary-color) !important;
+            border: 1px solid #e3e6f0;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn-view {
+            background-color: #36b9cc;
+            color: white;
+        }
+
+        .action-btn-edit {
+            background-color: #4e73df;
+            color: white;
+        }
+
+        .action-btn-delete {
+            background-color: #e74a3b;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb breadcrumb-path">
+                        <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#">Degree Management</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Degree Topics</li>
+                    </ol>
+                </nav>
+
+                <!-- Main Card -->
+                <div class="card">
+                    <input type="hidden"  id="studentId" th:value="${studentId}">
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="degreeTopicsTable" class="table table-bordered" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th width="5%">ID</th>
+                                    <th width="20%">Title</th>
+                                    <th width="40%">Description</th>
+                                    <th width="20%">Teacher</th>
+                                    <th width="15%">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="p : ${degreeTopics}">
+                                    <td th:text="${p.getId()}"></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="status-active"></span>
+                                            <span th:text="${p.getTitle()}" class="fw-semibold"></span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${p.getDescription()}"></td>
+                                    <td th:text="${p.getTeacher()}"></td>
+                                    <td onclick="choose(this)" data-id="[[${p.getId()}]]"> Choose</td>
+                                    <td class="action-buttons">
+                                        <button class="action-btn action-btn-view" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="action-btn action-btn-edit" title="Edit">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button class="action-btn action-btn-delete" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function choose(element){
+
+        var studentId=document.getElementById("studentId").value;
+        const degreeId = element.getAttribute('data-id');
+        console.log("Chosen degree ID:", degreeId);
+        console.log("Student ID:", studentId);
+
+    }
+</script>
