@@ -2,9 +2,208 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        /* Header Navbar Styles */
+        .header {
+            display: flex;
+            align-items: stretch;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            width: 250px; /* Same width as sidebar */
+            background-color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .degree-icon {
+            font-size: 32px;
+            color: white;
+        }
+
+        .navbar {
+            display: flex;
+            flex: 1;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 30px;
+            background-color: #ffffff;
+        }
+
+        .user-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Main Content Wrapper */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #34495e;
+        }
+
+        .nav-item.active {
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Main Content Styles */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .content-section {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .content-section p {
+            line-height: 1.6;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
+<!-- Header with Logo and Navbar -->
+<header class="header">
+    <div class="logo-container">
+        <div class="degree-icon">🎓</div>
+    </div>
+    <div class="navbar">
+        <div class="user-dropdown">
+            <div class="user-avatar">A</div>
+            <div class="dropdown-content">
+                <a href="#">Profile</a>
+                <a href="#">Settings</a>
+                <a href="#">Log Out</a>
+            </div>
+        </div>
+    </div>
+</header>
 
+<!-- Main Content Container -->
+<div class="main-container">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Navigation</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active">Dashboard</li>
+            <li class="nav-item">Degree Topics List</li>
+            <li class="nav-item">Feedback Messages</li>
+<!--            <li class="nav-item"></li>-->
+<!--            <li class="nav-item"></li>-->
+<!--            <li class="nav-item"></li>-->
+<!--            <li class="nav-item"></li>-->
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1 class="page-title">Dashboard</h1>
+        <div class="content-section">
+            <p>Welcome to the Student Management System. This platform provides comprehensive tools for educational institutions to efficiently manage student data, track academic progress, monitor attendance, and generate detailed reports. Navigate through the sidebar menu to access various features of the system.</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -292,13 +292,43 @@
         </div>
     </div>
 </div>
-<script>
-    function choose(element){
+<script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function choose(element){
         var studentId=document.getElementById("studentId").value;
         const degreeId = element.getAttribute('data-id');
         console.log("Chosen degree ID:", degreeId);
         console.log("Student ID:", studentId);
 
+        var degreeTopic={};
+        degreeTopic.user = studentId;
+
+
+        const ajaxCall = new Promise(resolve => {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                headers: { 'x-my-custom-header': 'some value' },
+                url: "/addStudentToDegree?id" +degreeId,
+                data: JSON.stringify(degreeTopic),
+                dataType: 'json',
+                cache: false,
+                timeout: 1500,
+                success: function () {
+                    resolve();
+                },
+                error: function () {
+                    resolve();
+                }
+            });
+        });
+
     }
 </script>
+
+
+
+
+

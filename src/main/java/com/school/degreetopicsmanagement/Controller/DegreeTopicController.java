@@ -2,20 +2,21 @@ package com.school.degreetopicsmanagement.Controller;
 
 import com.school.degreetopicsmanagement.DataObjects.DegreeTopicDTO;
 import com.school.degreetopicsmanagement.Model.DegreeTopic;
+import com.school.degreetopicsmanagement.Model.StudentDegreeProgress;
 import com.school.degreetopicsmanagement.Model.User;
 import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
+import com.school.degreetopicsmanagement.Repository.StudentDegreeProgressRepository;
 import com.school.degreetopicsmanagement.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -26,6 +27,9 @@ public class DegreeTopicController {
 
  @Autowired
  UserRepository userRepository;
+
+ @Autowired
+ StudentDegreeProgressRepository studentDegreeProgressRepository;
 
 
     @GetMapping(value="/addDegreeTopic")
@@ -54,6 +58,32 @@ public class DegreeTopicController {
          modelAndView.addObject("degreeTopics", degreeTopics);
          modelAndView.setViewName("degreeTopicList");
          return modelAndView;
+    }
+
+    @PostMapping(value = "/addStudentToDegree")
+    @ResponseBody
+    public void addStudentToDegree(@RequestParam(value = "id") Long id,
+                                   @RequestBody DegreeTopicDTO degreeTopicDTO) {
+        DegreeTopic degreeTopic = degreeTopicRespository.findById(id).orElseThrow();
+
+        System.out.println(degreeTopic.getId() + " d");
+        // Assign the student to the degree topic
+        degreeTopic.setStudent(degreeTopicDTO.getStudent());
+
+        // Create initial progress entry
+        StudentDegreeProgress studentDegreeProgress = new StudentDegreeProgress();
+        studentDegreeProgress.setStudent(degreeTopicDTO.getStudent());
+        studentDegreeProgress.setDegreeTopic(degreeTopic); // important!
+        studentDegreeProgress.setStatus("Choosed");
+        studentDegreeProgress.setUpdatedAt(LocalDateTime.now());
+        studentDegreeProgressRepository.save(studentDegreeProgress);
+        // Add to list
+        List<StudentDegreeProgress> progressList = new ArrayList<>();
+        progressList.add(studentDegreeProgress);
+        degreeTopic.setProgressList(progressList);
+
+        // Save everything
+        degreeTopicRespository.save(degreeTopic);
     }
 
 

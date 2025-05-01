@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Setter
@@ -34,5 +35,10 @@ public class DegreeTopic {
     @OneToOne
     @JoinColumn(name = "student_id", unique = true)
     private User student;
+
+    @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
+    private List<StudentDegreeProgress> progressList;
+
+
 
 }
