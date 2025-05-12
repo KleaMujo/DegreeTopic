@@ -43,6 +43,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(HttpServletResponse response, Authentication authentication) throws IOException {
+
         if (authentication != null) {
             response.sendRedirect("/");
         }

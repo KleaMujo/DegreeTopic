@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "degree_topic")
 public class DegreeTopic {
 
     @Id
@@ -39,6 +40,8 @@ public class DegreeTopic {
     @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
     private List<StudentDegreeProgress> progressList;
 
+    @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
+    private List<DegreeTopicRequest> degreeTopicRequests;
 
 
 }

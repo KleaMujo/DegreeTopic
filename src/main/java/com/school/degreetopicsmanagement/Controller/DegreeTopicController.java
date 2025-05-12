@@ -2,8 +2,10 @@ package com.school.degreetopicsmanagement.Controller;
 
 import com.school.degreetopicsmanagement.DataObjects.DegreeTopicDTO;
 import com.school.degreetopicsmanagement.Model.DegreeTopic;
+import com.school.degreetopicsmanagement.Model.DegreeTopicRequest;
 import com.school.degreetopicsmanagement.Model.StudentDegreeProgress;
 import com.school.degreetopicsmanagement.Model.User;
+import com.school.degreetopicsmanagement.Repository.DegreeTopicRequestRepository;
 import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
 import com.school.degreetopicsmanagement.Repository.StudentDegreeProgressRepository;
 import com.school.degreetopicsmanagement.Repository.UserRepository;
@@ -31,6 +33,8 @@ public class DegreeTopicController {
  @Autowired
  StudentDegreeProgressRepository studentDegreeProgressRepository;
 
+ @Autowired
+ DegreeTopicRequestRepository degreeTopicRequestRepository;
 
     @GetMapping(value="/addDegreeTopic")
     public ModelAndView  addDegreeTopic(ModelAndView modelAndView){
@@ -54,7 +58,7 @@ public class DegreeTopicController {
 
     @GetMapping(value="/showAllDegreeTopic")
     public ModelAndView  showAllDegreeTopic(ModelAndView modelAndView){
-          List<DegreeTopic> degreeTopics = degreeTopicRespository.findAll();
+        List<DegreeTopic> degreeTopics = degreeTopicRespository.findAll();
          modelAndView.addObject("degreeTopics", degreeTopics);
          modelAndView.setViewName("degreeTopicList");
          return modelAndView;
@@ -62,29 +66,24 @@ public class DegreeTopicController {
 
     @PostMapping(value = "/addStudentToDegree")
     @ResponseBody
-    public void addStudentToDegree(@RequestParam(value = "id") Long id,
-                                   @RequestBody DegreeTopicDTO degreeTopicDTO) {
+    public void addStudentToDegree(@RequestParam(value = "id") Long id) {
         DegreeTopic degreeTopic = degreeTopicRespository.findById(id).orElseThrow();
-
         System.out.println(degreeTopic.getId() + " d");
-        // Assign the student to the degree topic
-        degreeTopic.setStudent(degreeTopicDTO.getStudent());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
-        // Create initial progress entry
-        StudentDegreeProgress studentDegreeProgress = new StudentDegreeProgress();
-        studentDegreeProgress.setStudent(degreeTopicDTO.getStudent());
-        studentDegreeProgress.setDegreeTopic(degreeTopic); // important!
-        studentDegreeProgress.setStatus("Choosed");
-        studentDegreeProgress.setUpdatedAt(LocalDateTime.now());
-        studentDegreeProgressRepository.save(studentDegreeProgress);
-        // Add to list
-        List<StudentDegreeProgress> progressList = new ArrayList<>();
-        progressList.add(studentDegreeProgress);
-        degreeTopic.setProgressList(progressList);
+        DegreeTopicRequest request = new DegreeTopicRequest();
+        request.setDegreeTopic(degreeTopic);
+        request.setStudent(user);
+        request.setStatus("PENDING");
+        request.setRequestedAt(LocalDateTime.now());
 
-        // Save everything
-        degreeTopicRespository.save(degreeTopic);
+        degreeTopicRequestRepository.save(request);
+
     }
+
+
 
 
 }

@@ -244,7 +244,7 @@
 
                 <!-- Main Card -->
                 <div class="card">
-                    <input type="hidden"  id="studentId" th:value="${studentId}">
+                    <input type="hidden"  id="studentId" >
 
 
                     <div class="card-body">
@@ -260,31 +260,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="p : ${degreeTopics}">
-                                    <td th:text="${p.getId()}"></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="status-active"></span>
-                                            <span th:text="${p.getTitle()}" class="fw-semibold"></span>
-                                        </div>
-                                    </td>
-                                    <td th:text="${p.getDescription()}"></td>
-                                    <td th:text="${p.getTeacher()}"></td>
-                                    <td onclick="choose(this)" th:data-id="${p.id}">Choose</td>
-                                    <td class="action-buttons">
-                                        <button class="action-btn action-btn-view" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="action-btn action-btn-edit" title="Edit">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                        <button class="action-btn action-btn-delete" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
+                                <tr th:each="d : ${degreeTopicRequests}">
+                                    <!-- Student username as ID -->
+                                    <td th:text="${d.student.username}">StudentUsername</td>
+
+                                    <!-- Degree topic title -->
+                                    <td th:text="${d.degreeTopic.title}">TopicTitle</td>
+
+                                    <!-- Degree topic description -->
+                                    <td th:text="${d.degreeTopic.description}">TopicDescription</td>
+
+                                    <!-- Teacher name -->
+                                    <td th:text="${d.degreeTopic.teacher.username}">TeacherUsername</td>
                                 </tr>
-                                </tbody>
-                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -294,24 +283,6 @@
 </div>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    function choose(element){
-        const degreeId = element.getAttribute('data-id');
-        console.log("Chosen degree ID:", degreeId);
-
-        $.ajax({
-            type: "POST",
-            url: "/addStudentToDegree?id=" +degreeId,
-            success: function () {
-                alert("Request sent successfully!");
-            },
-            error: function () {
-                alert("Error sending request.");
-            }
-        });
-    }
-</script>
 
 
 
