@@ -269,19 +269,8 @@
                                         </div>
                                     </td>
                                     <td th:text="${p.getDescription()}"></td>
-                                    <td th:text="${p.getTeacher()}"></td>
+                                    <td th:text="${p.getTeacher().getUsername()}"></td>
                                     <td onclick="choose(this)" th:data-id="${p.id}">Choose</td>
-                                    <td class="action-buttons">
-                                        <button class="action-btn action-btn-view" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="action-btn action-btn-edit" title="Edit">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                        <button class="action-btn action-btn-delete" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

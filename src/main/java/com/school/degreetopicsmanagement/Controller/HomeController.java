@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -34,24 +35,38 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String homePage(HttpServletRequest httpServletRequest) {
+    public ModelAndView homePage(HttpServletRequest httpServletRequest) {
+
+        ModelAndView modelAndView = new ModelAndView();
 
         if (httpServletRequest.isUserInRole("ROLE_USER")) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
             User user = userRepository.findByUsername(authenticatedUser.getUsername());
+
             if ("student".equals(user.getRole())) {
-
-                return "/Student/studentDashboard";
+                modelAndView.setViewName("/Student/studentDashboard");
+                return modelAndView;
             } else if ("professor".equals(user.getRole())) {
+                List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
 
-                return "/Teacher/professorDashboard";
+                List<DegreeTopic> filteredTopics = degreeTopicList.stream()
+                        .filter(topic -> topic.getDegreeTopicRequests().stream()
+                                .anyMatch(request -> "PENDING".equalsIgnoreCase(request.getStatus())))
+                        .collect(Collectors.toList());
+
+                System.out.println(filteredTopics.size() + " siz") ;
+
+                modelAndView.setViewName("/Teacher/professorDashboard");
+                modelAndView.addObject("hasPendingRequests", filteredTopics);
+                return modelAndView;
             }
-
         }
-        return "login";
 
+        modelAndView.setViewName("login");
+        return modelAndView;
     }
+
 
     @GetMapping(value = "/sidebarStudent")
     public ModelAndView sidebarStudent(HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
@@ -78,11 +93,15 @@ public class HomeController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
+        List<DegreeTopic> allTopics = degreeTopicRespository.findAll();
+        List<DegreeTopic> filteredTopics = allTopics.stream()
+                .filter(topic -> topic.getDegreeTopicRequests().stream()
+                        .noneMatch(request -> "CHOOSEN".equalsIgnoreCase(request.getStatus())))
+                .collect(Collectors.toList());
+
 
         modelAndView.addObject("studentId", user.getId());
-        List<DegreeTopic> degreeTopics = degreeTopicRespository.findAll();
-        modelAndView.addObject("degreeTopics", degreeTopics);
-
+        modelAndView.addObject("degreeTopics", filteredTopics);
         modelAndView.setViewName("Student/degreeListStudent");
         return modelAndView;
     }
@@ -96,6 +115,8 @@ public class HomeController {
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
         System.out.println("id e teacher te log " + user.getId());
 
+        User user1 = userRepository.findById(user.getId()).get();
+        modelAndView.addObject("useri", user1.getUsername());
         List<DegreeTopic> degreeTopicList = user.getDegreeTopics();
         List<DegreeTopicRequest> degreeTopicRequests = degreeTopicRequestRepository.findAllByDegreeTopicIn(degreeTopicList);
         modelAndView.addObject("degreeTopicRequests", degreeTopicRequests);

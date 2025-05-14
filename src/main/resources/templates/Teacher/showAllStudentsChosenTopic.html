@@ -252,10 +252,10 @@
                             <table id="degreeTopicsTable" class="table table-bordered" style="width:100%">
                                 <thead>
                                 <tr>
-                                    <th width="5%">ID</th>
+                                    <th width="5%">Student</th>
                                     <th width="20%">Title</th>
                                     <th width="40%">Description</th>
-                                    <th width="20%">Teacher</th>
+<!--                                    <th width="20%">Teacher</th>-->
                                     <th width="15%">Actions</th>
                                 </tr>
                                 </thead>
@@ -268,10 +268,12 @@
                                     <td th:text="${d.degreeTopic.title}">TopicTitle</td>
 
                                     <!-- Degree topic description -->
-                                    <td th:text="${d.degreeTopic.description}">TopicDescription</td>
+                                    <td th:text="${d.getDegreeTopic().getDescription()}">TopicDescription</td>
 
                                     <!-- Teacher name -->
-                                    <td th:text="${d.degreeTopic.teacher.username}">TeacherUsername</td>
+<!--                                    <td th:text="${useri}">TeacherUsername</td>-->
+                                    <td th:text="${d.getStatus()}">TeacherUsername</td>
+
                                 </tr>
 
                         </div>
