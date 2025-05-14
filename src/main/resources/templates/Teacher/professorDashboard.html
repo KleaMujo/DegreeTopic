@@ -215,7 +215,7 @@
             <div class="dropdown-content">
                 <a href="#"><i class="fas fa-user me-2"></i> Profile</a>
                 <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
-                <a href="#"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
+                <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
             </div>
         </div>
     </div>
@@ -245,16 +245,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/addDegreeTopic">
-                    <i class="fas fa-plus-circle me-2"></i>  Add Degree Topic
+                <a class="nav-link" href="/viewNotificationsProfessor">
+                    <i class="fas fa-plus-circle me-2"></i>  View notifications
                 </a>
             </li>
 
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link" href="/ProfessorList">-->
-<!--                    <i class="fas fa-plus-circle me-2"></i>  Professor List-->
-<!--                </a>-->
-<!--            </li>-->
+
         </ul>
 
     </div>
@@ -269,31 +265,18 @@
                     <h4>Your Topic</h4>
                 </div>
 
-                <p th:each="e: ${hasPendingRequests}">
-                    <strong th:text="${e.getStudent()}"> <span th:text="${e.getTitle()}"></span></strong>
-                </p>
+                <p>
+                <div th:each="e : ${requests}">
+                    <strong>Student:</strong> <span th:text="${e.studentName}"></span><br>
+                    <strong>Degree Topic:</strong> <span th:text="${e.degreeTitle}"></span>
+                <strong>Status:</strong> <span th:text="${e.status}"></span>
 
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h4>Upcoming Deadlines</h4>
+                <hr>
                 </div>
-                <ul>
-                    <li>Proposal Submission - 15 June 2024</li>
-                    <li>Interim Report - 30 July 2024</li>
-                    <li>Final Presentation - 15 September 2024</li>
-                </ul>
+
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h4>Advisor Information</h4>
-                </div>
-                <p><strong>Name:</strong> Dr. Emily Johnson</p>
-                <p><strong>Department:</strong> Computer Science</p>
-                <p><strong>Email:</strong> e.johnson@university.edu</p>
-            </div>
+
         </div>
     </div>
 </div>

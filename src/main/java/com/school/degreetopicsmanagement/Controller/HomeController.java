@@ -2,6 +2,7 @@ package com.school.degreetopicsmanagement.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.school.degreetopicsmanagement.DataObjects.DegreeRequestDTO;
 import com.school.degreetopicsmanagement.Model.DegreeTopic;
 import com.school.degreetopicsmanagement.Model.DegreeTopicRequest;
 import com.school.degreetopicsmanagement.Model.User;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -50,18 +53,29 @@ public class HomeController {
             } else if ("professor".equals(user.getRole())) {
                 List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
 
-                List<DegreeTopic> filteredTopics = degreeTopicList.stream()
-                        .filter(topic -> topic.getDegreeTopicRequests().stream()
-                                .anyMatch(request -> "PENDING".equalsIgnoreCase(request.getStatus())))
-                        .collect(Collectors.toList());
+                List<DegreeRequestDTO> requestsList = new ArrayList<>();
 
-                System.out.println(filteredTopics.size() + " siz") ;
+                for (DegreeTopic degreeTopic : degreeTopicList) {
+                    List<DegreeTopicRequest> degreeTopicRequests = degreeTopic.getDegreeTopicRequests();
+                    System.out.println(degreeTopicRequests.size() + " size");
+
+                    for (DegreeTopicRequest degreeTopicRequest : degreeTopicRequests) {
+                        String studentName = degreeTopicRequest.getStudent().getUsername();
+                        String degreeTitle = degreeTopic.getTitle();
+                        String status = degreeTopicRequest.getStatus();
+                        System.out.println(studentName + " std username -> " + degreeTitle);
+
+                        requestsList.add(new DegreeRequestDTO(studentName, degreeTitle,status));
+                    }
+                }
+
+                modelAndView.addObject("requests", requestsList);
+            }
 
                 modelAndView.setViewName("/Teacher/professorDashboard");
-                modelAndView.addObject("hasPendingRequests", filteredTopics);
                 return modelAndView;
             }
-        }
+
 
         modelAndView.setViewName("login");
         return modelAndView;

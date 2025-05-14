@@ -37,8 +37,7 @@ public class DegreeTopic {
     @JoinColumn(name = "student_id", unique = true)
     private User student;
 
-    @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
-    private List<StudentDegreeProgress> progressList;
+
 
     @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
     private List<DegreeTopicRequest> degreeTopicRequests;

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Send Notification</title>
+</head>
+<body>
+<h2>Send Notification</h2>
+
+    <!-- Dropdown to select recipient (e.g., student or teacher) -->
+    <label for="recipient">Select Student:</label>
+<select name="recipient" id="recipient" required>
+    <option disabled selected value="">-- Select a student --</option>
+    <option th:each="name : ${studentNames}"
+            th:value="${name}"
+            th:text="${name}">
+    </option>
+</select>
+
+    <br><br>
+
+    <!-- Message input -->
+    <label for="message">Message:</label>
+    <input type="text" id="message" name="message" placeholder="Enter your message" required />
+    <br><br>
+
+    <!-- Submit button -->
+    <button type="button" onclick="send()">Send</button>
+
+</body>
+
+<script>
+    function send(){
+        var message={};
+
+        message.userDTO = document.getElementById("recipient").value;
+        message.messageDTO = document.getElementById("message").value;
+
+        const ajaxCall = new Promise(resolve => {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                headers: { 'x-my-custom-header': 'some value' },
+                url: "/addMessage",
+                data: JSON.stringify(message),
+                dataType: 'json',
+                cache: false,
+                timeout: 1500,
+                success: function () {
+                    resolve();
+                },
+                error: function () {
+                    resolve();
+                }
+            });
+        });
+
+
+    }
+</script>
+</html>
