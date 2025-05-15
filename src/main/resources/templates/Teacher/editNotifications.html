@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professor Notifications</title>
+    <title>Edit Notifications</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -186,6 +186,11 @@
             color: white;
             margin-left: 10px;
         }
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+            margin-left: 10px;
+        }
         .btn:hover {
             opacity: 0.9;
         }
@@ -198,6 +203,52 @@
         }
         .me-2 {
             margin-right: 8px;
+        }
+        /* Table Styles */
+        .notifications-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .notifications-table th,
+        .notifications-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .notifications-table th {
+            background-color: #f1f1f1;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .notifications-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        .edit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .action-btn i {
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -250,84 +301,129 @@
     </div>
     <!-- Main Content -->
     <div class="content">
-        <h1 class="page-title">Send Notification</h1>
+        <h1 class="page-title">Edit Notifications</h1>
         <div class="content-section">
-            <div class="form-group">
-                <label for="recipient">Select Student:</label>
-                <select name="recipient" id="recipient" required>
-                    <option disabled selected value="">-- Select a student --</option>
-                    <option th:each="name : ${studentNames}"
-                            th:value="${name.getId()}"
-                            th:text="${name.getUsername()}">
-                    </option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="message">Message:</label>
-                <input type="text" id="message" name="message" placeholder="Enter your message" required />
-            </div>
-            <div class="form-actions">
-                <button type="button" onclick="send()" class="btn btn-primary">
-                    <i class="fas fa-paper-plane me-2"></i>Send
-                </button>
-                <button type="button" th:if="${!studentNames.isEmpty()}" onclick="edit()" class="btn btn-secondary">
-                    <i class="fas fa-edit me-2"></i>Edit
-                </button>
-            </div>
+            <table class="notifications-table">
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Message</th>
+                    <th>Date Sent</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="notification : ${notifications}">
+                    <td th:text="${notification.studentName}">John Doe</td>
+                    <td th:text="${notification.message}">Please submit your assignment by Friday</td>
+                    <td th:text="${notification.date}">2025-05-12</td>
+                    <td class="action-buttons">
+                        <button class="action-btn edit-btn" th:onclick="'editNotification(' + ${notification.id} + ')'">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="action-btn delete-btn" th:onclick="'deleteNotification(' + ${notification.id} + ')'">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Edit Notification Form -->
+        <div class="content-section" id="editForm" style="display: none;">
+            <h3 style="margin-bottom: 15px; color: var(--primary-color);">Edit Notification</h3>
+            <form id="notificationEditForm">
+                <input type="hidden" id="notificationId" name="notificationId">
+                <div class="form-group">
+                    <label for="editStudent">Student:</label>
+                    <select name="editStudent" id="editStudent" required>
+                        <option disabled selected value="">-- Select a student --</option>
+                        <option th:each="name : ${studentNames}"
+                                th:value="${name.getId()}"
+                                th:text="${name.getUsername()}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editMessage">Message:</label>
+                    <input type="text" id="editMessage" name="editMessage" placeholder="Enter your message" required />
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="saveEdit()" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                    <button type="button" onclick="cancelEdit()" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="content-section">
+            <a href="/viewNotificationsProfessor" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Notifications
+            </a>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-    function send(){
-        var message = {};
+    // JavaScript functions for editing notifications
+    function editNotification(id) {
+        // In a real application, this would fetch the notification data from the server
+        // For now, we'll simulate this behavior
+        document.getElementById('notificationId').value = id;
 
-        message.userDTO = document.getElementById("recipient").value;
-        message.messageDTO = document.getElementById("message").value;
+        // Get the row data from the table
+        const row = document.querySelector(`tr[onclick*="${id}"]`) ||
+            document.querySelector(`button[onclick*="${id}"]`).closest('tr');
 
+        const studentName = row.cells[0].innerText;
+        const message = row.cells[1].innerText;
 
-        $.ajax({
-            type: "POST",
-            contentType: "application/json",
-            headers: { 'x-my-custom-header': 'some value' },
-            url: "/addMessage",
-            data: JSON.stringify(message),
-            dataType: 'json',
-            cache: false,
-            timeout: 1500,
-            success: function (response) {
-
-            },
-            error: function (error) {
-
+        // Find the student in the dropdown by name
+        const studentSelect = document.getElementById('editStudent');
+        for (let i = 0; i < studentSelect.options.length; i++) {
+            if (studentSelect.options[i].text === studentName) {
+                studentSelect.selectedIndex = i;
+                break;
             }
-        });
+        }
+
+        document.getElementById('editMessage').value = message;
+        document.getElementById('editForm').style.display = 'block';
+
+        // Scroll to the edit form
+        document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function edit(){
-        var message = {};
+    function saveEdit() {
+        // In a real application, this would send the data to the server
+        // For now, we'll just show an alert
+        const id = document.getElementById('notificationId').value;
+        const student = document.getElementById('editStudent');
+        const studentName = student.options[student.selectedIndex].text;
+        const message = document.getElementById('editMessage').value;
 
-        message.userDTO = document.getElementById("recipient").value;
-        message.messageDTO = document.getElementById("message").value;
+        alert(`Notification #${id} updated for ${studentName} with message: ${message}`);
 
+        // Here you would typically submit the form or make an AJAX request
+        // After successful submission, refresh the page or update the table row
+        // For now, we'll just hide the form
+        document.getElementById('editForm').style.display = 'none';
+    }
 
-        $.ajax({
-            type: "POST",
-            contentType: "application/json",
-            headers: { 'x-my-custom-header': 'some value' },
-            url: "/editMessage?id=" + message.userDTO,
-            data: JSON.stringify(message),
-            dataType: 'json',
-            cache: false,
-            timeout: 1500,
-            success: function (response) {
+    function cancelEdit() {
+        document.getElementById('editForm').style.display = 'none';
+    }
 
-            },
-            error: function (error) {
-
-            }
-        });
+    function deleteNotification(id) {
+        if (confirm('Are you sure you want to delete this notification?')) {
+            // In a real application, this would send a delete request to the server
+            alert(`Notification #${id} deleted`);
+            // Here you would typically remove the row from the table or refresh the page
+        }
     }
 </script>
 </body>

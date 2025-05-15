@@ -245,8 +245,6 @@
                 <!-- Main Card -->
                 <div class="card">
                     <input type="hidden"  id="studentId" >
-
-
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="degreeTopicsTable" class="table table-bordered" style="width:100%">
@@ -255,26 +253,25 @@
                                     <th width="5%">Student</th>
                                     <th width="20%">Title</th>
                                     <th width="40%">Description</th>
-<!--                                    <th width="20%">Teacher</th>-->
                                     <th width="15%">Actions</th>
+                                    <th> Visible </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="d : ${degreeTopicRequests}">
-                                    <!-- Student username as ID -->
+                                <tr th:each="d : ${degreeTopicRequests}" th:if="${d.getStatus().equals('PENDING')}" th:attr="data-request-id=${d.id}">
                                     <td th:text="${d.student.username}">StudentUsername</td>
 
-                                    <!-- Degree topic title -->
                                     <td th:text="${d.degreeTopic.title}">TopicTitle</td>
 
-                                    <!-- Degree topic description -->
                                     <td th:text="${d.getDegreeTopic().getDescription()}">TopicDescription</td>
 
-                                    <!-- Teacher name -->
-<!--                                    <td th:text="${useri}">TeacherUsername</td>-->
+
                                     <td th:text="${d.getStatus()}">TeacherUsername</td>
+                                    <td><input type="checkbox" class="form-check-input visibility-checkbox" id="confirmation" required></td>
 
                                 </tr>
+                                </tbody>
+                            </table>
 
                         </div>
                     </div>
@@ -285,6 +282,35 @@
 </div>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".visibility-checkbox");
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                if (checkbox.checked) {
+                    const tr = checkbox.closest("tr");
+                    const requestId = tr.getAttribute("data-request-id");
+
+
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json",
+                        url: "/addStatusActive?id=" + requestId,
+                        timeout: 1500,
+                        success: function () {
+                            resolve();
+                        },
+                        error: function () {
+                            resolve();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+</script>
 
 
 

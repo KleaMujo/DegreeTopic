@@ -109,12 +109,13 @@
         }
 
         /* Sidebar Styles */
+        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background-color: var(--primary-color);
             color: #fff;
             padding: 20px 0;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-header {
@@ -124,6 +125,7 @@
 
         .sidebar-header h2 {
             font-size: 1.5rem;
+            color: #fff;
         }
 
         .nav-menu {
@@ -146,12 +148,23 @@
         }
 
         .nav-item:hover {
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .nav-item.active {
             background-color: #34495e;
             border-left: 4px solid var(--secondary-color);
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .me-2 {
+            margin-right: 8px;
         }
 
         /* Main Content Styles */
@@ -226,39 +239,40 @@
     <!-- Sidebar Navigation -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2> Professor dashboard</h2>
+            <h2>Professor Dashboard</h2>
         </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">
+        <ul class="nav-menu">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">
                     <i class="fas fa-home me-2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/showAllStudentsChosenTopic">
-                    <i class="fas fa-plus-circle me-2"></i> See Degree Topic
+                    <i class="fas fa-users me-2"></i> See Degree Topic
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/addDegreeTopic">
-                    <i class="fas fa-plus-circle me-2"></i>  Add Degree Topic
+                    <i class="fas fa-plus-circle me-2"></i> Add Degree Topic
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/viewNotificationsProfessor">
-                    <i class="fas fa-plus-circle me-2"></i>  View notifications
+                    <i class="fas fa-bell me-2"></i> View Notifications
                 </a>
             </li>
-
-
+            <li class="nav-item">
+                <a class="nav-link" href="/topicPart">
+                    <i class="fas fa-bell me-2"></i> topicPart
+                </a>
+            </li>
         </ul>
-
     </div>
 
     <!-- Main Content -->
     <div class="content">
         <h1 class="page-title">Dashboard</h1>
-
         <div class="dashboard-cards">
             <div class="card">
                 <div class="card-header">
@@ -269,7 +283,7 @@
                 <div th:each="e : ${requests}">
                     <strong>Student:</strong> <span th:text="${e.studentName}"></span><br>
                     <strong>Degree Topic:</strong> <span th:text="${e.degreeTitle}"></span>
-                <strong>Status:</strong> <span th:text="${e.status}"></span>
+                    <strong>Status:</strong> <span th:text="${e.status}"></span>
 
                 <hr>
                 </div>

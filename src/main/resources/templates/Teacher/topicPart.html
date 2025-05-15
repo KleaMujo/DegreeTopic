@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Shto Pjesët e Temës</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+
+<h2 class="mb-4">📘 Tema: <span  >Emri i Temës</span></h2>
+
+<!-- Forma për shtim të pjesëve -->
+<form  method="post">
+  <div class="mb-3">
+    <label for="title" class="form-label">Emri i Pjesës</label>
+    <input type="text" class="form-control" id="title"   placeholder="P.sh. Abstract, Kapitulli 1" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Përshkrimi / Udhëzimi</label>
+    <textarea class="form-control" id="description"   rows="4" placeholder="Përshkrim i detajuar..." required></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">➕ Shto Pjesë</button>
+</form>
+
+<hr class="my-4">
+
+<!-- Lista e pjesëve ekzistuese -->
+<h4 class="mb-3">📄 Pjesët ekzistuese të kësaj teme</h4>
+
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th>Emri i Pjesës</th>
+    <th>Përshkrimi</th>
+    <th>Veprime</th>
+  </tr>
+  </thead>
+  <tbody>
+<!--  <tr th:each="part : ${existingParts}">-->
+<!--    <td th:text="${part.title}">Abstract</td>-->
+<!--    <td th:text="${part.description}">Përshkrimi i pjesës</td>-->
+<!--    <td>-->
+<!--      <a th:href="@{'/teacher/topic-parts/edit/' + ${part.id}}" class="btn btn-sm btn-warning">✏️</a>-->
+<!--      <a th:href="@{'/teacher/topic-parts/delete/' + ${part.id}}" class="btn btn-sm btn-danger"-->
+<!--         onclick="return confirm('Jeni i sigurt që doni ta fshini?')">🗑️</a>-->
+<!--    </td>-->
+<!--  </tr>-->
+  </tbody>
+</table>
+
+</body>
+</html>
