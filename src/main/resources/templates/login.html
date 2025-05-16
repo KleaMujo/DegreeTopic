@@ -3,80 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link href="/static/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/../css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        .failed {
-            color: red;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f2f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .loggedOut {
-            color: lightskyblue;
-        }
+
         .loginDiv {
-            border: 1px solid black;
-            border-radius: 10px;
-            margin: 10% 35%;
-            background-color: #c98d8e;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            width: 400px;
+            margin: 8% auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
+
+        .failed {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .loggedOut {
+            color: #5bc0de;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
         .classDiv {
-            margin: 20px;
+            margin: 15px 0;
             display: flex;
-            font-family: sans-serif;
-            font-size: larger;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            width: 35%;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .input {
+            width: 60%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007bff;
             color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .classDiv:last-child {
             justify-content: center;
         }
-        .label {
-            margin-right: 20px;
-            width: 20%;
-        }
-        .input {
-            width: 50%;
-            border-radius: 5px;
-        }
-        .button {
-            border: 1px solid black;
-            border-radius: 5px;
-            padding: 5px 20px;
-            font-size: medium;
-            background-color: white;
-        }
+
     </style>
 </head>
-<body>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="col-xxl-3 col-lg-4 col-md-5">
 
-<form action="#" th:action="@{/authenticateTheUser}" method="POST">
-    <div class="loginDiv">
-        <!-- Check for login error -->
-        <div th:if="${param.error}">
-            <i class="failed">Sorry! You entered invalid username/password.</i>
-        </div>
+    <div class="auth-full-page-content d-flex p-sm-5 p-4" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+        <div class="w-100">
+            <div class="d-flex flex-column h-100">
+                <div class="mb-4 mb-md-5 text-center">
+                    <a href="/" class="d-block auth-logo">
+                        <div class="logo-container">
+                            <div class="degree-icon">🎓</div>
+                        </div>
+                    </a>
+                </div>
 
-        <!-- Check for login error -->
-        <div th:if="${param.logout}">
-            <i class="loggedOut">You have been logged out.</i>
-        </div>
+                <div class="auth-content my-auto">
+                    <div class="text-center">
+                        <h5 class="mb-0"></h5>
+                        <p class="text-muted mt-2">Please enter your user information.</p>
+                    </div>
 
-        <div class="classDiv">
-            <div class="label">User Name: </div>
-            <input class="input" type="text" name="username" />
-        </div>
+                    <!-- Error message -->
+                    <div th:if="${param.error}" class="alert alert-danger text-center mt-3" role="alert">
+                        Sorry! You entered an invalid username/password.
+                    </div>
 
-        <div class="classDiv">
-            <div class="label">Password: </div>
-            <input class="input" type="password" name="password" />
-        </div>
+                    <!-- Logout message -->
+                    <div th:if="${param.logout}" class="alert alert-success text-center mt-3" role="alert">
+                        You have been logged out.
+                    </div>
 
-        <div class="classDiv">
-            <input class="button" type="submit" value="Login" />
-        </div>
+                    <form class="mt-4 pt-2" th:action="@{/authenticateTheUser}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                        </div>
 
-        <!-- Register Button -->
-        <div class="classDiv">
-            <a class="button" href="/register">Register</a> <!-- Link to register page -->
+                        <div class="mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1">
+                                    <label for="password" class="form-label">Password</label>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <a href="/forgot-password" class="text-muted">Forgot password?</a>
+                                </div>
+                            </div>
+
+                            <div class="input-group auth-pass-inputgroup">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                                <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remember-check" name="remember-me">
+                                    <label class="form-check-label" for="remember-check">
+                                        Remember me
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary w-100 waves-effect waves-light">Log In</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4 pt-2 text-center">
+                        <p class="text-muted mb-0">Don't have an account?
+                            <a href="/register" class="text-primary fw-semibold">Sign up now</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-4 mt-md-5 text-center">
+
+                </div>
+            </div>
         </div>
     </div>
-</form>
-
+</div>
+</div>
 
 </body>
 </html>

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
 
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-  <title>Login</title>
+  <title>Register</title>
 
   <style>
     .failed {
@@ -51,36 +51,75 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Optionally add Bootstrap JS for Bootstrap components -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
 <body>
 
-<div>
-  <label for="username">Username:</label>
-  <input type="text" id="username" name="username" required />
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="col-xxl-3 col-lg-4 col-md-5">
+    <div class="auth-full-page-content d-flex p-sm-5 p-4" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+      <div class="w-100">
+        <div class="d-flex flex-column h-100">
+          <div class="mb-4 mb-md-5 text-center">
+            <a href="/" class="d-block auth-logo">
+              <div class="logo-container">
+                <div class="degree-icon">🎓</div>
+              </div>
+            </a>
+          </div>
+
+          <div class="auth-content my-auto">
+            <div class="text-center">
+              <h5 class="mb-0">Register</h5>
+              <p class="text-muted mt-2">Please enter your user information.</p>
+            </div>
+
+            <form class="mt-4 pt-2">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" required />
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required />
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+              </div>
+
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select id="role" class="form-select">
+                  <option value="student">Student</option>
+                  <option value="professor">Professor</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <button type="button" onclick="register()" class="btn btn-primary w-100">Register</button>
+              </div>
+            </form>
+
+            <div class="mt-4 pt-2 text-center">
+              <p class="text-muted mb-0">Already have an account?
+                <a href="/login" class="text-primary fw-semibold">Login now</a>
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 mt-md-5 text-center">
+            <!-- Optional footer -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div>
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required />
-</div>
-
-<div>
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password" required />
-</div>
-
-<div>
-  <label for="role">Role</label>
-  <select id="role">
-    <option value="student">Student</option>
-    <option value="professor">Professor</option>
-  </select>
-</div>
-
-<div>
-  <button type="button" onclick="register()">Register</button>
-</div>
 
 <script>
   function register() {
@@ -94,7 +133,7 @@
     userDTO.passwordDTO = password;
     userDTO.roleDTO= role;
 
-    console.log("Sending data: ", userDTO);  // Debugging log
+    console.log("Sending data: ", userDTO);
 
     $.ajax({
       type: "POST",
@@ -102,8 +141,17 @@
       contentType: "application/json",
       data: JSON.stringify(userDTO),
       success: function(response) {
-
+        Swal.close();
+        Swal.fire({
+          title: 'Success!',
+          text: response,
+          icon: 'success',
+        }).then(function () {
+          button.disabled = false;
+          location.reload();
+        });
       },
+
       error: function(xhr, status, error) {
         console.log("Error:", status, error);
       }

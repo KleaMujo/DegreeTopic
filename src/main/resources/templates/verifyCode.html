@@ -2,22 +2,362 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Code</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Verification</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--dark-color);
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 420px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 48px;
+            color: var(--secondary-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .verification-form {
+            margin-top: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .code-input {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .code-input input {
+            width: 45px;
+            height: 55px;
+            margin: 0 5px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background-color: var(--light-color);
+            transition: all 0.3s;
+        }
+
+        .code-input input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+
+        .resend {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .resend:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .timer {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+    </style>
 </head>
 <body>
-<h1>Verify Code</h1>
-<p>A verification code has been sent to your email. Please enter it below to proceed.</p>
-<div>
-    <label for="code">Verification Code:</label>
-    <input type="text" id="code" name="code">
-    <button type="submit" onclick="verify2fa()">Verify</button>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<div class="container">
+    <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+    <h1>Security Verification</h1>
+    <p>To protect your account, please verify your identity by entering the 6-digit code sent to your email address.</p>
 
+    <div class="verification-form">
+        <div class="form-group">
+            <label >Enter verification code:</label>
+            <div class="code-input" id="code-inputs">
+                <input type="text" maxlength="1" autofocus>
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+            </div>
+            <div class="error-message" id="error-message">
+                Invalid verification code. Please try again.
+            </div>
+        </div>
+
+        <button type="submit" id="verify-button" onclick="verify2fa()">Verify</button>
+    </div>
+
+    <div class="footer">
+        <p>Didn't receive a code? <span class="timer" id="timer">05:00</span></p>
+        <p>Request a new code <a href="#" class="resend" id="resend-link">Resend code</a></p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+    $(document).ready(function() {
+        // Set up code input field behavior
+        const inputs = document.querySelectorAll('.code-input input');
+        const verifyButton = document.getElementById('verify-button');
+        const errorMessage = document.getElementById('error-message');
+        const resendLink = document.getElementById('resend-link');
+        const timerElement = document.getElementById('timer');
+
+        // Start timer
+        let timeLeft = 300; // 5 minutes in seconds
+        const countdownTimer = setInterval(updateTimer, 1000);
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownTimer);
+                resendLink.style.pointerEvents = 'auto';
+                resendLink.style.opacity = '1';
+            } else {
+                timeLeft -= 1;
+            }
+        }
+
+        // Initially disable resend link
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+
+        // Handle input field navigation
+        inputs.forEach((input, index) => {
+            input.addEventListener('keyup', function(e) {
+                const currentInput = input;
+                const nextInput = input.nextElementSibling;
+                const prevInput = input.previousElementSibling;
+
+                // Clear error message when typing
+                errorMessage.style.display = 'none';
+
+                // If input has value, move to next input
+                if (currentInput.value.length === 1) {
+                    if (nextInput && nextInput.tagName === 'INPUT') {
+                        nextInput.focus();
+                    }
+                }
+
+                // Handle backspace
+                if (e.key === 'Backspace') {
+                    if (prevInput && prevInput.tagName === 'INPUT') {
+                        prevInput.focus();
+                    }
+                }
+            });
+
+            // Handle paste event
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text');
+
+                if (/^\d+$/.test(pasteData) && pasteData.length <= inputs.length) {
+                    for (let i = 0; i < pasteData.length; i++) {
+                        if (i + index < inputs.length) {
+                            inputs[i + index].value = pasteData.charAt(i);
+                        }
+                    }
+
+                    // Focus on the next empty input or last input
+                    const nextEmptyIndex = Math.min(index + pasteData.length, inputs.length - 1);
+                    inputs[nextEmptyIndex].focus();
+                }
+            });
+        });
+
+        // Verify functionality
+        function verify2fa() {
+            // Collect code from inputs
+            let code = '';
+            inputs.forEach(input => {
+                code += input.value;
+            });
+
+            // Check if code is complete
+            if (code.length !== 6) {
+                errorMessage.textContent = 'Please enter all 6 digits of the verification code.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Here you would add AJAX call to verify the code with your backend
+            // For demo purposes, we'll just show a successful verification after a delay
+            verifyButton.disabled = true;
+            verifyButton.textContent = 'Verifying...';
+
+            setTimeout(function() {
+                // Simulate verification success
+                // In production, you would use actual server response logic
+                if (code === '123456') { // Replace with actual verification logic
+                    window.location.href = '/dashboard'; // Redirect on success
+                } else {
+                    errorMessage.textContent = 'Invalid verification code. Please try again.';
+                    errorMessage.style.display = 'block';
+                    verifyButton.disabled = false;
+                    verifyButton.textContent = 'Verify';
+
+                    // Clear inputs
+                    inputs.forEach(input => {
+                        input.value = '';
+                    });
+                    inputs[0].focus();
+                }
+            }, 1500);
+        }
+
+        // Attach verify function to button
+        verifyButton.addEventListener('click', verify2fa);
+
+        // Allow Enter key to submit
+        inputs.forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verify2fa();
+                }
+            });
+        });
+
+        // Resend code functionality
+        resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            if (timeLeft <= 0) {
+                resendLink.textContent = 'Sending...';
+
+                // Simulate sending a new code
+                setTimeout(function() {
+                    // Reset timer
+                    timeLeft = 300;
+                    resendLink.textContent = 'Resend code';
+                    resendLink.style.pointerEvents = 'none';
+                    resendLink.style.opacity = '0.5';
+
+                    // Clear inputs
+                    inputs.forEach(input => {
+                        input.value = '';
+                    });
+                    inputs[0].focus();
+
+                    // Display success message
+                    errorMessage.textContent = 'A new verification code has been sent.';
+                    errorMessage.style.color = '#27ae60';
+                    errorMessage.style.display = 'block';
+
+                    // Restart countdown
+                    clearInterval(countdownTimer);
+                    countdownTimer = setInterval(updateTimer, 1000);
+                }, 1500);
+            }
+        });
+    });
+
+
 
     function verify2fa() {
-        const enteredCode = document.getElementById("code").value;
+        const inputs = document.querySelectorAll('#code-inputs input');
+        let enteredCode = '';
+
+        inputs.forEach(input => {
+            enteredCode += input.value.trim();
+        });
+
+        if (enteredCode.length !== 6) {
+            alert("Please enter all 6 digits.");
+            return;
+        }
 
         $.ajax({
             type: "POST",
@@ -38,9 +378,7 @@
                 alert("error");
             }
         });
-
     }
 
 </script>
-</body>
-</html>
+
