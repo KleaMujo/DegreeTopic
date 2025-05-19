@@ -6,6 +6,8 @@
     <link href="/static/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
     <link href="/../css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
         body {
@@ -87,11 +89,17 @@
     </style>
 </head>
 <div class="d-flex justify-content-center align-items-center min-vh-100">
-<div class="col-xxl-3 col-lg-4 col-md-5">
+    <div class="col-xxl-8 col-lg-8 col-md-10 d-flex shadow-sm" style="max-width: 900px;">
 
-    <div class="auth-full-page-content d-flex p-sm-5 p-4" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
-        <div class="w-100">
-            <div class="d-flex flex-column h-100">
+        <!-- Left image panel -->
+        <div class="login-image flex-grow-1"
+             style="background-image: url('assets/images/test.webp'); background-size: cover; background-position: center; min-width: 300px; border-radius: 0.5rem 0 0 0.5rem;">
+        </div>
+
+        <!-- Right form panel -->
+        <div class="auth-full-page-content d-flex flex-column p-sm-5 p-4 flex-grow-1" style="border-radius: 0 0.5rem 0.5rem 0;">
+            <div class="w-100 d-flex flex-column h-100">
+
                 <div class="mb-4 mb-md-5 text-center">
                     <a href="/" class="d-block auth-logo">
                         <div class="logo-container">
@@ -117,12 +125,15 @@
                     </div>
 
                     <form class="mt-4 pt-2" th:action="@{/authenticateTheUser}" method="post">
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <div class="d-flex align-items-start">
                                 <div class="flex-grow-1">
                                     <label for="password" class="form-label">Password</label>
@@ -133,41 +144,22 @@
                             </div>
 
                             <div class="input-group auth-pass-inputgroup">
+                                <span class="input-group-text bg-white"> <i class="fas fa-lock"></i></span>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
-                                <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="fas fa-eye"></i></button>
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember-check" name="remember-me">
-                                    <label class="form-check-label" for="remember-check">
-                                        Remember me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-primary w-100 waves-effect waves-light">Log In</button>
+                        <div class="mb-3 mt-4">
+                            <button class="btn btn-primary w-100" type="submit">Login</button>
                         </div>
                     </form>
-
-                    <div class="mt-4 pt-2 text-center">
-                        <p class="text-muted mb-0">Don't have an account?
-                            <a href="/register" class="text-primary fw-semibold">Sign up now</a>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mt-4 mt-md-5 text-center">
 
                 </div>
             </div>
         </div>
+
     </div>
-</div>
 </div>
 
 </body>
