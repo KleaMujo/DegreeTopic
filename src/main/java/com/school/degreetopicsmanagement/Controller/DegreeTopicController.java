@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,9 @@ public class DegreeTopicController {
  DegreeTopicRequestRepository degreeTopicRequestRepository;
 
     @GetMapping(value="/addDegreeTopic")
-    public ModelAndView  addDegreeTopic(ModelAndView modelAndView){
+    public ModelAndView  addDegreeTopic(ModelAndView modelAndView, HttpServletRequest httpServletRequest){
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
+
         modelAndView.setViewName("Teacher/addDegreeTopic");
      return modelAndView;
     }
@@ -44,6 +47,7 @@ public class DegreeTopicController {
     @PostMapping(value="/addDegreeTopic")
     @ResponseBody
     public void addDegreeTopic(@RequestBody DegreeTopicDTO degreeTopicDTO){
+
         DegreeTopic degreeTopic = new DegreeTopic();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
@@ -93,10 +97,11 @@ public class DegreeTopicController {
     }
 
     @GetMapping(value = "viewNotificationsProfessor")
-    public ModelAndView  viewNotificationsProfessor(ModelAndView modelAndView) {
+    public ModelAndView  viewNotificationsProfessor(ModelAndView modelAndView,HttpServletRequest httpServletRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
 
         List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
         List<User> studentNames = new ArrayList<>();
@@ -138,11 +143,12 @@ public class DegreeTopicController {
 
     }
 
-    @GetMapping(value="/topicPart")
-    public ModelAndView  topicPart(ModelAndView modelAndView){
-
-        modelAndView.setViewName("Teacher/topicPart");
+    @GetMapping(value="/createParts")
+    public ModelAndView  topicPart(ModelAndView modelAndView,HttpServletRequest httpServletRequest){
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
+        modelAndView.setViewName("Teacher/createParts");
         return modelAndView;
     }
+
 
 }

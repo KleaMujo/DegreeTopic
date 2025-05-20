@@ -1,0 +1,35 @@
+<div class="sidebar">
+  <div class="sidebar-header" style="display:flex;">
+    <div class="degree-icon">🎓</div>
+    <span th:text="${@userService.getUsername()}" style="margin-top: 35px"></span>
+  </div>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="fas fa-home me-2"></i> Dashboard
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${currentPath == '/myDegrees'} ? ' active'">
+      <a class="nav-link" href="/myDegrees">
+        <i class="fas fa-users"></i> My Degrees Topic
+      </a>
+    </li>
+    <li class="nav-item " th:classappend="${currentPath == '/addDegreeTopic'} ? ' active'">
+      <a class="nav-link" href="/addDegreeTopic">
+        <i class="fas fa-plus-circle me-2"></i> Add Degree Topic
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${currentPath == '/viewNotificationsProfessor'} ? ' active'">
+      <a class="nav-link" href="/viewNotificationsProfessor">
+        <i class="fas fa-bell me-2"></i> View Notifications
+      </a>
+    </li>
+
+    <li class="nav-item" th:classappend="${currentPath == '/createParts'} ? ' active'">
+      <a class="nav-link" href="/createParts">
+        <i class="fas fa-bell me-2"></i> Degree Part
+      </a>
+    </li>
+
+  </ul>
+</div>

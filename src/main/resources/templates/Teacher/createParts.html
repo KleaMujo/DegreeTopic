@@ -154,23 +154,9 @@
     <!-- Main Content -->
     <div class="content">
 
-
-        <div id="notifications" class="content-section active">
-            <h1 class="page-title">Send Notification</h1>
-            <div class="form-group">
-                <label for="recipient">Select Student:</label>
-                <select name="recipient" id="recipient" required>
-                    <option disabled selected value="">-- Select a student --</option>
-                    <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="message">Message:</label>
-                <input type="text" id="message" name="message" placeholder="Enter your message" required />
-            </div>
             <div class="form-actions">
                 <button type="button" onclick="send()" class="btn btn-primary">
-                    <i class="fas fa-paper-plane me-2"></i>Send
+                    <i class="fas fa-plus me-2"></i>Create
                 </button>
 
             </div>

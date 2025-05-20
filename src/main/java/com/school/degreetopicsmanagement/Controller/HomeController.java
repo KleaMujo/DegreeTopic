@@ -110,7 +110,7 @@ public class HomeController {
         List<DegreeTopic> allTopics = degreeTopicRespository.findAll();
         List<DegreeTopic> filteredTopics = allTopics.stream()
                 .filter(topic -> topic.getDegreeTopicRequests().stream()
-                        .noneMatch(request -> "CHOOSEN".equalsIgnoreCase(request.getStatus())))
+                        .noneMatch(request -> "ACTIVE".equalsIgnoreCase(request.getStatus())))
                 .collect(Collectors.toList());
 
 
@@ -136,6 +136,26 @@ public class HomeController {
         modelAndView.addObject("degreeTopicRequests", degreeTopicRequests);
 
         modelAndView.setViewName("Teacher/showAllStudentsChosenTopic");
+        return modelAndView;
+
+    }
+
+    @GetMapping(value = "/myDegrees")
+    public ModelAndView myDegrees(HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
+        //id e teacherit t loguar
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+        System.out.println("id e teacher te log " + user.getId());
+
+        User user1 = userRepository.findById(user.getId()).get();
+        modelAndView.addObject("useri", user1.getUsername());
+        List<DegreeTopic> degreeTopicList = user.getDegreeTopics();
+        modelAndView.addObject("degreeTopicList", degreeTopicList);
+
+        modelAndView.setViewName("Teacher/myDegrees");
         return modelAndView;
 
     }
