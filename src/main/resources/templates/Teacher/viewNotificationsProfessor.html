@@ -6,6 +6,27 @@
     <title>Professor Notifications</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .top-nav-buttons {
+            margin-bottom: 20px;
+        }
+
+        .top-nav-buttons button {
+            margin-right: 10px;
+        }
+
+        .form-group, .form-actions {
+            margin: 15px 0;
+        }
+    </style>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -250,16 +271,20 @@
     </div>
     <!-- Main Content -->
     <div class="content">
-        <h1 class="page-title">Send Notification</h1>
-        <div class="content-section">
+        <!-- Tab Header -->
+        <div class="top-nav-buttons">
+            <button onclick="showSection('notifications')">Notifications</button>
+            <button onclick="showSection('parts')">Parts</button>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notifications" class="content-section active">
+            <h1 class="page-title">Send Notification</h1>
             <div class="form-group">
                 <label for="recipient">Select Student:</label>
                 <select name="recipient" id="recipient" required>
                     <option disabled selected value="">-- Select a student --</option>
-                    <option th:each="name : ${studentNames}"
-                            th:value="${name.getId()}"
-                            th:text="${name.getUsername()}">
-                    </option>
+                    <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
                 </select>
             </div>
             <div class="form-group">
@@ -274,6 +299,12 @@
                     <i class="fas fa-edit me-2"></i>Edit
                 </button>
             </div>
+        </div>
+
+        <!-- Parts Section -->
+        <div id="parts" class="content-section">
+            <h1 class="page-title">Parts Section</h1>
+            <p>Additional functionality can go here...</p>
         </div>
     </div>
 </div>
@@ -330,5 +361,21 @@
         });
     }
 </script>
+<script>
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.content-section');
+        sections.forEach(sec => sec.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+    }
+
+    function send() {
+        alert('Send button clicked');
+    }
+
+    function edit() {
+        alert('Edit button clicked');
+    }
+</script>
+
 </body>
 </html>
