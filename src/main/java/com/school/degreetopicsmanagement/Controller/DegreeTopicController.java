@@ -3,14 +3,8 @@ package com.school.degreetopicsmanagement.Controller;
 import com.school.degreetopicsmanagement.DataObjects.DegreeRequestDTO;
 import com.school.degreetopicsmanagement.DataObjects.DegreeTopicDTO;
 import com.school.degreetopicsmanagement.DataObjects.MessageDTO;
-import com.school.degreetopicsmanagement.Model.DegreeTopic;
-import com.school.degreetopicsmanagement.Model.DegreeTopicRequest;
-import com.school.degreetopicsmanagement.Model.Message;
-import com.school.degreetopicsmanagement.Model.User;
-import com.school.degreetopicsmanagement.Repository.DegreeTopicRequestRepository;
-import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
-import com.school.degreetopicsmanagement.Repository.MessageRepository;
-import com.school.degreetopicsmanagement.Repository.UserRepository;
+import com.school.degreetopicsmanagement.Model.*;
+import com.school.degreetopicsmanagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +29,9 @@ public class DegreeTopicController {
 
  @Autowired
  DegreeTopicRequestRepository degreeTopicRequestRepository;
+
+ @Autowired
+ private AssignmentRepository assignmentRepository;
 
     @GetMapping(value="/addDegreeTopic")
     public ModelAndView  addDegreeTopic(ModelAndView modelAndView, HttpServletRequest httpServletRequest){
@@ -146,6 +143,27 @@ public class DegreeTopicController {
     @GetMapping(value="/createParts")
     public ModelAndView  topicPart(ModelAndView modelAndView,HttpServletRequest httpServletRequest){
         modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+
+        List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
+        List<User> studentNames = new ArrayList<>();
+        for (DegreeTopic degreeTopic : degreeTopicList) {
+            List<DegreeTopicRequest> degreeTopicRequests = degreeTopic.getDegreeTopicRequests();
+            for (DegreeTopicRequest degreeTopicRequest : degreeTopicRequests) {
+                User std = degreeTopicRequest.getStudent();
+                studentNames.add(std);
+                modelAndView.addObject("studentNames", studentNames);
+            }
+            modelAndView.addObject("user",user.getUsername());
+        }
+
+        List <Assignment> assignments = assignmentRepository.findByTeacherId(user.getId());
+        modelAndView.addObject("assignments", assignments);
+
+
         modelAndView.setViewName("Teacher/createParts");
         return modelAndView;
     }

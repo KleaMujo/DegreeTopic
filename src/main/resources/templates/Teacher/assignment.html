@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Assignment Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .form-select, .form-control {
+            border-radius: 6px;
+            border: 1px solid #dde2e7;
+            padding: 10px 14px;
+            font-size: 15px;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #4a7dff;
+            box-shadow: 0 0 0 3px rgba(74, 125, 255, 0.15);
+        }
+        .btn-primary {
+            background-color: #3e64ff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2c4ccc;
+            transform: translateY(-1px);
+        }
+        .btn-outline-secondary {
+            border-color: #dde2e7;
+            color: #4a5568;
+            border-radius: 6px;
+            padding: 10px 16px;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+            color: #2d3748;
+        }
+        .section-title {
+            font-size: 22px;
+            color: #2d3748;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        .file-upload {
+            border: 2px dashed #dde2e7;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-upload:hover {
+            border-color: #4a7dff;
+            background-color: rgba(74, 125, 255, 0.03);
+        }
+        .file-upload i {
+            font-size: 28px;
+            color: #4a7dff;
+            margin-bottom: 8px;
+        }
+        .link-btn {
+            color: #4a7dff;
+            background: none;
+            border: none;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .link-btn i {
+            margin-right: 6px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .add-link-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border: 1px solid #dde2e7;
+            border-radius: 6px;
+            color: #4a5568;
+            background-color: #fff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .add-link-btn i {
+            margin-right: 6px;
+            color: #4a7dff;
+        }
+        .header-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-logo h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .header-logo p {
+            color: #718096;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header with Logo and Navbar -->
+<header class="header">
+
+    <div class="navbar">
+        <div class="user-dropdown">
+            <div class="user-avatar">A</div>
+            <div class="dropdown-content">
+                <a href="#"><i class="fas fa-user me-2"></i> Profile</a>
+                <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+                <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content Container -->
+<div class="main-container" style="display: flex">
+    <div th:replace="/Teacher/sidebarTeacher.html"></div>
+
+    <div class="content">
+
+        <div class="card">
+            <div class="card-header">
+                Assignment Details
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="recipient" class="form-label">Recipient</label>
+                            <select class="form-select" name="recipient" id="recipient" required>
+                                <option disabled selected value="">-- Select a student --</option>
+                                <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="dueDate" class="form-label">Due Date</label>
+                            <input type="date" id="dueDate" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="points" class="form-label">Points</label>
+                            <select class="form-select" name="points" id="points" required>
+                                <option disabled selected value="">Select points</option>
+                                <option>10</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Assignment Content
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label  class="form-label">Assignment Title</label>
+                    <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle">
+                </div>
+
+                <div class="form-group">
+                    <label  class="form-label">Assignment Instructions</label>
+                    <textarea id="assignmentDescription" class="form-control"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Attachments</label>
+                    <div class="file-upload" id="fileUploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop files here or <span style="color: #4a7dff; text-decoration: underline;">browse</span></p>
+                        <input type="file" id="fileInput" style="display: none;">
+                    </div>
+                </div>
+
+                <button type="button" class="add-link-btn" id="addLinkBtn">
+                    <i class="fas fa-link"></i> Add Resource Link
+                </button>
+
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createAssignment()">Create Assignment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding links -->
+    <div class="modal fade" id="linkModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Resource Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="linkText" class="form-label">Display Text</label>
+                        <input type="text" class="form-control" id="linkText" placeholder="Enter link text">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkUrl" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="linkUrl" placeholder="https://example.com">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveLinkBtn" onclick="addLink()">Add Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script>
+    function createAssignment(){
+        var assignmentDto={};
+        assignmentDto.studentId= document.getElementById("recipient").value;
+        assignmentDto.dueDate = document.getElementById("dueDate").value;
+        assignmentDto.points = document.getElementById("points").value;
+        assignmentDto.assignmentTitle = document.getElementById("assignmentTitle").value;
+        assignmentDto.assignmentDescription = document.getElementById("assignmentDescription").value;
+        var fileInput = document.getElementById("fileInput");
+        if (fileInput.files.length > 0) {
+            assignmentDto.fileName = fileInput.files[0].name;  // Get uploaded file name
+        } else {
+            assignmentDto.fileName = null;
+        }
+
+        console.log("Student ID:", assignmentDto.studentId);
+        console.log("Due Date:", assignmentDto.dueDate);
+        console.log("Points:", assignmentDto.points);
+        console.log("Title:", assignmentDto.assignmentTitle);
+        console.log("Description:", assignmentDto.assignmentDescription);
+        console.log("Uploaded file name:", assignmentDto.fileName);
+
+        $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                headers: { 'x-my-custom-header': 'some value' },
+                url: "/createAssignment",
+                data: JSON.stringify(assignmentDto),
+                dataType: 'json',
+                cache: false,
+                timeout: 1500,
+                success: function (response) {
+
+                },
+                error: function (error) {
+
+                }
+            });
+        }
+
+
+    function addLink(){
+        var linkUrl = document.getElementById("linkUrl").value;
+        var linkText = document.getElementById("linkText").value;
+
+        console.log(linkText +  " " + linkUrl)
+
+    }
+
+</script>
+
+
+
+
+
+<script>
+    // Initialize the editor
+    ClassicEditor
+        .create(document.querySelector('#popUp'), {
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'link',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'undo',
+                    'redo'
+                ]
+            }
+        })
+        .then(editor => {
+            console.log('Editor initialized successfully');
+
+            // Sync CKEditor with the textarea
+            editor.model.document.on('change:data', () => {
+                document.querySelector('#popUp').value = editor.getData();
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    // File upload handling
+    document.getElementById('fileUploadArea').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const fileName = this.files[0].name;
+            document.querySelector('.file-upload p').textContent = `Selected file: ${fileName}`;
+        }
+    });
+
+    // Link button handling
+    document.getElementById('addLinkBtn').addEventListener('click', function() {
+        const linkModal = new bootstrap.Modal(document.getElementById('linkModal'));
+        linkModal.show();
+    });
+</script>
+</body>
+</html>

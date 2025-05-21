@@ -12,6 +12,14 @@
 
 
 
+        h2{
+            letter-spacing: .0178571429em;
+            font-family: "Google Sans", Roboto, Arial, sans-serif;
+            font-size: .875rem;
+            font-weight: 500;
+            line-height: 1.25rem;
+            color: #3c4043;
+        }
 
 
         .content-section {
@@ -131,6 +139,128 @@
             margin-right: 8px;
         }
     </style>
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            position: relative;
+            margin: 20px;
+            padding: .5rem 0;
+            max-width: 780px !important;
+        }
+        .card h2 {
+            margin: 0 0 8px;
+        }
+        .meta {
+            letter-spacing: .025em;
+            font-family: Roboto, Arial, sans-serif;
+            font-size: .75rem;
+            font-weight: 400;
+            line-height: 1rem;
+            color: #5f6368;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+        .status {
+            font-size: 14px;
+            color: red;
+        }
+        .tooltip {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 4px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            top: 25px;
+            right: 0;
+            font-size: 12px;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+        .options-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+        }
+        .menu-icon {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            background-color: #2c3e50;
+        }
+
+        .menu-icon:hover {
+            background-color: #f0f0f0;
+        }
+
+        .icon {
+            fill: white; /* or any color you prefer */
+        }
+    </style>
+    <!-- Styles -->
+    <style>
+        .options-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .options-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 100;
+            min-width: 100px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu button {
+            background: none;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown-menu button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 <!-- Header with Logo and Navbar -->
@@ -155,12 +285,41 @@
     <div class="content">
 
             <div class="form-actions">
-                <button type="button" onclick="send()" class="btn btn-primary">
+                <button type="button" onclick="create()" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Create
                 </button>
 
             </div>
+
+
+
+        <div class="card" th:each="a : ${assignments}">
+            <div class="card-header" style="display: flex; align-items: center; gap: 10px;">
+                <div class="menu-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="currentColor" class="icon">
+                        <path d="M7 15h10v2H7zM7 11h10v2H7zM7 7h10v2H7z"/>
+                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14c0
+             1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V5h14v14H5z"/>
+                    </svg>
+                </div>
+                <h2 th:text="${user +'  posted a new assignment :' +  a.getAssignmentTitle()}"></h2>
+            </div>
+
+            <div class="meta" th:text="${a.getDate()}"></div>
+
+            <div class="options-container">
+                <button class="options-btn" onclick="toggleDropdown(this)">⋮</button>
+                <div class="dropdown-menu">
+                    <button onclick="editItem()">Edit</button>
+                    <button onclick="deleteItem()">Delete</button>
+                </div>
+            </div>
         </div>
+
+
+
+    </div>
 
 
     </div>
@@ -168,61 +327,40 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-    function send(){
-        var message = {};
-
-        message.userDTO = document.getElementById("recipient").value;
-        message.messageDTO = document.getElementById("message").value;
-
-        console.log(message.messageDTO + " " + message.userDTO)
-
-        $.ajax({
-            type: "POST",
-            contentType: "application/json",
-            headers: { 'x-my-custom-header': 'some value' },
-            url: "/addMessage",
-            data: JSON.stringify(message),
-            dataType: 'json',
-            cache: false,
-            timeout: 1500,
-            success: function (response) {
-
-            },
-            error: function (error) {
-
-            }
-        });
+    function create(){
+        window.location.href= "/assignment"
     }
-
-    function edit(){
-        var message = {};
-
-        message.userDTO = document.getElementById("recipient").value;
-        message.messageDTO = document.getElementById("message").value;
-
-
-        $.ajax({
-            type: "POST",
-            contentType: "application/json",
-            headers: { 'x-my-custom-header': 'some value' },
-            url: "/editMessage?id=" + message.userDTO,
-            data: JSON.stringify(message),
-            dataType: 'json',
-            cache: false,
-            timeout: 1500,
-            success: function (response) {
-
-            },
-            error: function (error) {
-
-            }
-        });
-    }
-
-
-
-
 </script>
+ <script>
+    function toggleDropdown(button) {
+        const menu = button.nextElementSibling;
+        menu.classList.toggle('show');
 
+        // Close other dropdowns if multiple
+        document.querySelectorAll('.dropdown-menu').forEach(drop => {
+            if (drop !== menu) drop.classList.remove('show');
+        });
+    }
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', function (e) {
+        const isDropdown = e.target.closest('.options-container');
+        if (!isDropdown) {
+            document.querySelectorAll('.dropdown-menu').forEach(drop => {
+                drop.classList.remove('show');
+            });
+        }
+    });
+
+    function editItem() {
+        alert('Edit clicked');
+        // Add your edit logic here
+    }
+
+    function deleteItem() {
+        alert('Delete clicked');
+        // Add your delete logic here
+    }
+</script>
 </body>
 </html>
