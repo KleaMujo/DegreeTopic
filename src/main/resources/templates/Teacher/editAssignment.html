@@ -146,27 +146,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="recipient" class="form-label">Recipient</label>
-                            <select class="form-select" name="recipient" id="recipient" required>
-                                <option disabled selected value="">-- Select a student --</option>
-                                <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
-                            </select>
+                            <label  class="form-label">Recipient</label>
+                                <input type="text"  class="form-control" readonly th:value="${user}">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="dueDate" class="form-label">Due Date</label>
-                            <input type="date" id="dueDate" class="form-control">
+                            <input type="date"  th:value="${#dates.format(assignment.date, 'yyyy-MM-dd')}" id="dueDate" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="points" class="form-label">Points</label>
                             <select class="form-select" name="points" id="points" required>
-                                <option disabled selected value="">Select points</option>
-                                <option>10</option>
-                                <option>50</option>
-                                <option>100</option>
+                                <option  th:text="${assignment.getPoints()}"> </option>
                             </select>
                         </div>
                     </div>
@@ -181,12 +175,12 @@
             <div class="card-body">
                 <div class="form-group">
                     <label  class="form-label">Assignment Title</label>
-                    <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle">
+                    <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle" th:value="${assignment.getAssignmentTitle()}">
                 </div>
 
                 <div class="form-group">
                     <label  class="form-label">Assignment Instructions</label>
-                    <textarea id="assignmentDescription" class="form-control"></textarea>
+                    <textarea id="assignmentDescription" class="form-control" th:text="${assignment.getAssignmentDescription()}"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -194,7 +188,7 @@
                     <div class="file-upload" id="fileUploadArea">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Drag and drop files here or <span style="color: #4a7dff; text-decoration: underline;">browse</span></p>
-                        <input type="file" name="file" id="fileInput" style="display: none;">
+                        <input type="file" id="fileInput" style="display: none;">
                     </div>
                 </div>
                 <input type="hidden" id="hiddenLinkText">
@@ -206,7 +200,7 @@
 
                 <div class="text-end mt-4">
                     <button type="button" class="btn btn-outline-secondary me-2">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="createAssignment()">Create Assignment</button>
+                    <button type="button" class="btn btn-primary" onclick="editAssignment()">Create Assignment</button>
                 </div>
             </div>
         </div>
@@ -223,11 +217,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="linkText" class="form-label">Display Text</label>
-                        <input type="text" class="form-control" id="linkText" placeholder="Enter link text">
+                        <input type="text" class="form-control" id="linkText" placeholder="Enter link text"  th:value="${assignment.getLinkText()}">
                     </div>
                     <div class="form-group">
                         <label for="linkUrl" class="form-label">URL</label>
-                        <input type="url" class="form-control" id="linkUrl" placeholder="https://example.com">
+                        <input type="url" class="form-control" id="linkUrl" placeholder="https://example.com"  th:value="${assignment.getLinkUrl()}">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -245,44 +239,53 @@
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 <script>
 
-    function createAssignment() {
+
+
+
+
+    function editAssignment() {
+        var assignmentDto = {};
+        assignmentDto.studentId = document.getElementById("recipient").value;
+        assignmentDto.dueDate = document.getElementById("dueDate").value;
+        assignmentDto.points = document.getElementById("points").value;
+        assignmentDto.assignmentTitle = document.getElementById("assignmentTitle").value;
+        assignmentDto.assignmentDescription = document.getElementById("assignmentDescription").value;
+        assignmentDto.linkUrl = document.getElementById("hiddenLinkUrl").value;
+        assignmentDto.linkText = document.getElementById("hiddenLinkText").value;
+
+
         const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0]; // Will be undefined if no file selected
-
-        const assignmentDto = {
-            studentId: document.getElementById("recipient").value,
-            dueDate: document.getElementById("dueDate").value,
-            points: document.getElementById("points").value,
-            assignmentTitle: document.getElementById("assignmentTitle").value,
-            assignmentDescription: document.getElementById("assignmentDescription").value,
-            linkUrl: document.getElementById("hiddenLinkUrl").value,
-            linkText: document.getElementById("hiddenLinkText").value,
-            fileName: file ? file.name : null
-        };
-
-        const formData = new FormData();
-        formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {
-            type: "application/json"
-        }));
-
-        if (file) {
-            formData.append("file", file);
+        if (fileInput.files.length > 0) {
+            assignmentDto.fileName = fileInput.files[0].name;
         }
 
-        $.ajax({
-            type: "POST",
-            url: "/createAssignment",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log("Assignment created successfully");
-            },
-            error: function (error) {
-                console.error("Error:", error);
-            }
-        });
+        console.log("Student ID:", assignmentDto.studentId);
+        console.log("Due Date:", assignmentDto.dueDate);
+        console.log("Points:", assignmentDto.points);
+        console.log("Title:", assignmentDto.assignmentTitle);
+        console.log("Description:", assignmentDto.assignmentDescription);
+        console.log("linku " + assignmentDto.linkUrl + " " + assignmentDto.linkText);
+        console.log("File Name:", assignmentDto.fileName || "No file selected");
     }
+
+    //
+    //     $.ajax({
+    //         type: "POST",
+    //         contentType: "application/json",
+    //         headers: { 'x-my-custom-header': 'some value' },
+    //         url: "/createAssignment",
+    //         data: JSON.stringify(assignmentDto),
+    //         dataType: 'json',
+    //         cache: false,
+    //         timeout: 1500,
+    //         success: function (response) {
+    //
+    //         },
+    //         error: function (error) {
+    //
+    //         }
+    //     });
+    // }
 
 
     function addLink() {

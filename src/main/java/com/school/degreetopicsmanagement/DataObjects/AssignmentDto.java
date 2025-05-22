@@ -20,5 +20,8 @@ public class AssignmentDto {
         private String assignmentDescription;
         private String fileName;
         private Date date;
+        private String linkText;
+        private String linkUrl;
+
 
 }

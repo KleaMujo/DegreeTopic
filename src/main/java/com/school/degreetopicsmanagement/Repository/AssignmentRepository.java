@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Repository
-public interface AssignmentRepository extends JpaRepository<Assignment, Integer> {
+public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query("SELECT a FROM Assignment a WHERE a.teacherId = :userId ")
     List<Assignment> findByTeacherId(@Param("userId") Long userId);

@@ -38,4 +38,10 @@ public class Assignment {
     private String fileName;
 
 
+    @Column(name="link_text")
+    private String linkText;
+
+    @Column(name="link_url")
+    private String linkUrl;
+
 }

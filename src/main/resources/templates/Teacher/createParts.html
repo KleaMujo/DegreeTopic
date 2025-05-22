@@ -156,11 +156,10 @@
             letter-spacing: .025em;
             font-family: Roboto, Arial, sans-serif;
             font-size: .75rem;
-            font-weight: 400;
             line-height: 1rem;
-            color: #5f6368;
-            margin-left: 10px;
-            margin-top: 10px;
+            color: #8a8c8f;
+            margin-left: 49px;
+            margin-top: -12px;
         }
         .status {
             font-size: 14px;
@@ -294,7 +293,8 @@
 
 
         <div class="card" th:each="a : ${assignments}">
-            <div class="card-header" style="display: flex; align-items: center; gap: 10px;">
+            <div class="card-header">
+              <div style="display: flex;gap: 10px">
                 <div class="menu-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                          fill="currentColor" class="icon">
@@ -305,23 +305,19 @@
                 </div>
                 <h2 th:text="${user +'  posted a new assignment :' +  a.getAssignmentTitle()}"></h2>
             </div>
-
-            <div class="meta" th:text="${a.getDate()}"></div>
+                <div class="meta"  th:text="${#dates.format(a.date, 'dd MMM')}"></div>
+           </div>
 
             <div class="options-container">
                 <button class="options-btn" onclick="toggleDropdown(this)">⋮</button>
                 <div class="dropdown-menu">
-                    <button onclick="editItem()">Edit</button>
-                    <button onclick="deleteItem()">Delete</button>
+                    <button onclick="editItem(this)"  th:attr="data-id=${a.id}">Edit</button>
+                    <button onclick="deleteItem(this)"  th:attr="data-id=${a.id}">Delete</button>
                 </div>
             </div>
         </div>
 
-
-
     </div>
-
-
     </div>
 </div>
 
@@ -336,13 +332,12 @@
         const menu = button.nextElementSibling;
         menu.classList.toggle('show');
 
-        // Close other dropdowns if multiple
+
         document.querySelectorAll('.dropdown-menu').forEach(drop => {
             if (drop !== menu) drop.classList.remove('show');
         });
     }
 
-    // Close dropdown if clicked outside
     document.addEventListener('click', function (e) {
         const isDropdown = e.target.closest('.options-container');
         if (!isDropdown) {
@@ -352,14 +347,28 @@
         }
     });
 
-    function editItem() {
-        alert('Edit clicked');
-        // Add your edit logic here
-    }
+    function editItem(button) {
+        const assignmentId = button.getAttribute("data-id");
+        console.log(assignmentId + " id ")
+        window.location.href = "/editAssignment?id=" + assignmentId;
 
-    function deleteItem() {
-        alert('Delete clicked');
-        // Add your delete logic here
+    }
+    function deleteItem(button){
+        const assignmentId = button.getAttribute("data-id");
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            headers: { 'x-my-custom-header': 'some value' },
+            url: "/deleteAssignment?id=" + assignmentId,
+            cache: false,
+            timeout: 1500,
+            success: function (response) {
+
+            },
+            error: function (error) {
+
+            }
+        });
     }
 </script>
 </body>
