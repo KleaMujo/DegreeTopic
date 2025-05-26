@@ -219,7 +219,7 @@
                                         <span class="input-group-text">
                                             <i class="fas fa-align-left"></i>
                                         </span>
-                                    <textarea required id="description" class="form-control" placeholder="Enter a detailed description of the degree topic" rows="4"></textarea>
+                                    <textarea required id="description" class="form-control" placeholder="Enter a detailed description of the degree topic" rows="4" maxlength="1000"></textarea>
                                 </div>
                             </div>
 
@@ -240,33 +240,29 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function saveDegreeTopic(){
-        var title=document.getElementById("title").value;
-        var description=document.getElementById("description").value;
+    function saveDegreeTopic() {
+        var title = document.getElementById("title").value;
+        var description = document.getElementById("description").value;
 
-        var degreeTopic={};
-        degreeTopic.titleDTO=title;
-        degreeTopic.descriptionDTO = description;
+        var degreeTopic = {
+            titleDTO: title,
+            descriptionDTO: description
+        };
 
-        const ajaxCall = new Promise(resolve => {
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                headers: { 'x-my-custom-header': 'some value' },
-                url: "/addDegreeTopic",
-                data: JSON.stringify(degreeTopic),
-                dataType: 'json',
-                cache: false,
-                timeout: 1500,
-                success: function () {
-                    resolve();
-                },
-                error: function () {
-                    resolve();
-                }
-            });
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/addDegreeTopic",
+            data: JSON.stringify(degreeTopic),
+            success: function () {
+                alert("Degree Topic saved succesfully!");
+                window.location.href = "/myDegrees";
+            },
+            error: function (xhr, status, error) {
+                console.error("Error saving degree topic:", status, error);
+            }
         });
-
     }
+
 </script>
 

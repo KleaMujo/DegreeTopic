@@ -153,15 +153,16 @@
 
     <!-- Main Content -->
     <div class="content">
-
-
         <div id="notifications" class="content-section active">
             <h1 class="page-title">Send Notification</h1>
             <div class="form-group">
                 <label for="recipient">Select Student:</label>
                 <select name="recipient" id="recipient" required>
                     <option disabled selected value="">-- Select a student --</option>
-                    <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
+                    <option th:each="message : ${messageDTOList}"
+                            th:value="${message.getStudentDTO()}"
+                            th:text="${message.getStudentDTO() + ' - ' + message.getDegreeTopic().getTitle()}">
+                    </option>
                 </select>
             </div>
             <div class="form-group">
@@ -172,7 +173,6 @@
                 <button type="button" onclick="send()" class="btn btn-primary">
                     <i class="fas fa-paper-plane me-2"></i>Send
                 </button>
-
             </div>
         </div>
 
@@ -185,11 +185,9 @@
     function send(){
         var message = {};
 
-        message.userDTO = document.getElementById("recipient").value;
+        message.studentDTO = document.getElementById("recipient").value;
         message.messageDTO = document.getElementById("message").value;
-
-        console.log(message.messageDTO + " " + message.userDTO)
-
+        console.log(message.messageDTO + " " + message.studentDTO)
         $.ajax({
             type: "POST",
             contentType: "application/json",
@@ -200,7 +198,6 @@
             cache: false,
             timeout: 1500,
             success: function (response) {
-
             },
             error: function (error) {
 
