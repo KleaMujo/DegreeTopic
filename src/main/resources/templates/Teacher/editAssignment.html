@@ -156,14 +156,7 @@
                             <input type="date"  th:value="${#dates.format(assignment.date, 'yyyy-MM-dd')}" id="dueDate" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="points" class="form-label">Points</label>
-                            <select class="form-select" name="points" id="points" required>
-                                <option  th:text="${assignment.getPoints()}"> </option>
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -237,6 +230,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<input type="hidden" th:value="${assignment.getId()}" id="assignmentId">
 <script>
 
 
@@ -244,48 +238,47 @@
 
 
     function editAssignment() {
-        var assignmentDto = {};
-        assignmentDto.studentId = document.getElementById("recipient").value;
-        assignmentDto.dueDate = document.getElementById("dueDate").value;
-        assignmentDto.points = document.getElementById("points").value;
-        assignmentDto.assignmentTitle = document.getElementById("assignmentTitle").value;
-        assignmentDto.assignmentDescription = document.getElementById("assignmentDescription").value;
-        assignmentDto.linkUrl = document.getElementById("hiddenLinkUrl").value;
-        assignmentDto.linkText = document.getElementById("hiddenLinkText").value;
+        var assignmentDto = {
+            dueDate: document.getElementById("dueDate").value,
 
+            assignmentTitle: document.getElementById("assignmentTitle").value,
+            assignmentDescription: document.getElementById("assignmentDescription").value,
+            linkUrl: document.getElementById("hiddenLinkUrl").value,
+            linkText: document.getElementById("hiddenLinkText").value
+        };
+        var assignmentId = document.getElementById("assignmentId").value;
 
-        const fileInput = document.getElementById('fileInput');
+        var fileInput = document.getElementById('fileInput');
+        var formData = new FormData();
+
+        // Add assignmentId as a request param
+        // (Since it's a @RequestParam, it should be in the URL or query string)
+        // We'll append it to the URL
+
+        // Convert assignmentDto object to JSON string to send as a separate field
+        formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {type: "application/json"}));
+
+        // Add file if exists
         if (fileInput.files.length > 0) {
-            assignmentDto.fileName = fileInput.files[0].name;
+            formData.append("file", fileInput.files[0]);
         }
 
-        console.log("Student ID:", assignmentDto.studentId);
-        console.log("Due Date:", assignmentDto.dueDate);
-        console.log("Points:", assignmentDto.points);
-        console.log("Title:", assignmentDto.assignmentTitle);
-        console.log("Description:", assignmentDto.assignmentDescription);
-        console.log("linku " + assignmentDto.linkUrl + " " + assignmentDto.linkText);
-        console.log("File Name:", assignmentDto.fileName || "No file selected");
+        $.ajax({
+            type: "POST",
+            url: "/editAssignment?id=" + assignmentId,  // fix URL param
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 15000,
+            success: function(response) {
+                console.log("Success:", response);
+            },
+            error: function(err) {
+                console.error("Error:", err);
+            }
+        });
     }
-
-    //
-    //     $.ajax({
-    //         type: "POST",
-    //         contentType: "application/json",
-    //         headers: { 'x-my-custom-header': 'some value' },
-    //         url: "/createAssignment",
-    //         data: JSON.stringify(assignmentDto),
-    //         dataType: 'json',
-    //         cache: false,
-    //         timeout: 1500,
-    //         success: function (response) {
-    //
-    //         },
-    //         error: function (error) {
-    //
-    //         }
-    //     });
-    // }
 
 
     function addLink() {

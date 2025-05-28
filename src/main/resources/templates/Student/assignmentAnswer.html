@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Academic Assignment Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #1e3a8a;
+      --secondary-color: #3b82f6;
+      --accent-color: #1d4ed8;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --background-primary: #ffffff;
+      --background-secondary: #f9fafb;
+      --border-color: #e5e7eb;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background-secondary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header Section */
+    .header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      padding: 3rem 0;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .header-subtitle {
+      font-size: 1.125rem;
+      font-weight: 300;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 3rem 0;
+    }
+
+    /* Assignment Card */
+    .assignment-card {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .assignment-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .header-content-flex {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .assignment-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+      border-radius: 12px;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .assignment-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .assignment-meta {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .meta-divider {
+      width: 4px;
+      height: 4px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    /* Submission Section */
+    .submission-section {
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: var(--background-secondary);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-area:hover {
+      border-color: var(--secondary-color);
+      background: #eff6ff;
+    }
+
+    .upload-area.dragover {
+      border-color: var(--secondary-color);
+      background: #eff6ff;
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .upload-area:hover .upload-icon {
+      color: var(--secondary-color);
+    }
+
+    .upload-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-description {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-info {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .file-info.show {
+      display: block;
+    }
+
+    .file-details {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .file-type-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--secondary-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    .file-meta {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .file-size {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .remove-file {
+      background: none;
+      border: none;
+      color: var(--danger-color);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .remove-file:hover {
+      background: #fef2f2;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .btn:hover:before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      background: var(--background-primary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--background-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    /* Status Messages */
+    .status-message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .status-message.show {
+      display: block;
+    }
+
+    .status-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .status-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 2rem;
+      }
+
+      .assignment-card {
+        margin: 0 1rem 2rem;
+      }
+
+      .card-header,
+      .submission-section {
+        padding: 1.5rem;
+      }
+
+      .upload-area {
+        padding: 2rem 1rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        justify-content: center;
+      }
+    }
+
+    /* Loading States */
+    .loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<!-- Header Section -->
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <h1 class="header-title">Academic Assignment Portal</h1>
+      <p class="header-subtitle">Submit your coursework assignments with confidence through our secure and professional platform</p>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="container">
+    <!-- Assignment Details Card -->
+    <div class="assignment-card">
+      <div class="card-header">
+        <div class="header-content-flex">
+          <div class="assignment-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div>
+            <h2 class="assignment-title" th:text="${assignment.getAssignmentTitle()}">Advanced Data Structures and Algorithms</h2>
+            <div class="assignment-meta">
+              <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span th:text="${#dates.format(assignment.date, 'EEEE, MMMM dd, yyyy')}">Monday, January 15, 2024</span>
+              </div>
+              <div class="meta-divider"></div>
+              <div class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span>Due 11:59 PM</span>
+              </div>
+              <div class="meta-divider"></div>
+              <div class="meta-item">
+                <i class="fas fa-user"></i>
+                <span th:text="${assignment.getTeacherId()}">Dr. Johnson</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Section -->
+      <div class="submission-section">
+        <h3 class="section-title">
+          <i class="fas fa-upload"></i>
+          Assignment Submission
+        </h3>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message">
+          <div id="statusContent"></div>
+        </div>
+
+
+        <div class="form-group">
+          <label  class="form-label">Assignment Instructions</label>
+          <textarea id="assignmentDescription" class="form-control"></textarea>
+        </div>
+
+
+        <!-- Upload Area -->
+        <div style="margin-top: 10px" class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <div class="upload-title">Select or drag your assignment file</div>
+          <div class="upload-description">
+            Supported formats: PDF, DOC, DOCX, TXT (Maximum size: 25MB)
+          </div>
+          <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(event)">
+        </div>
+
+        <!-- File Information -->
+        <div id="fileInfo" class="file-info">
+          <div class="file-details">
+            <div id="fileTypeIcon" class="file-type-icon">PDF</div>
+            <div class="file-meta">
+              <div id="fileName" class="file-name">assignment.pdf</div>
+              <div id="fileSize" class="file-size">2.4 MB</div>
+            </div>
+            <button type="button" class="remove-file" onclick="removeFile()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="clearSubmission()">
+            <i class="fas fa-undo"></i>
+            Clear
+          </button>
+          <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitAssignment()" disabled>
+            <i class="fas fa-paper-plane"></i>
+            Submit Assignment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  let selectedFile = null;
+
+  // File selection handler
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      if (validateFile(file)) {
+        selectedFile = file;
+        displayFileInfo(file);
+        showStatus('File selected successfully', 'success');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    }
+  }
+
+  // File validation
+  function validateFile(file) {
+    const maxSize = 25 * 1024 * 1024; // 25MB
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+
+    if (file.size > maxSize) {
+      showStatus('File size exceeds 25MB limit', 'error');
+      return false;
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      showStatus('Unsupported file format. Please use PDF, DOC, DOCX, or TXT', 'error');
+      return false;
+    }
+
+    return true;
+  }
+
+  // Display file information
+  function displayFileInfo(file) {
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fileTypeIcon = document.getElementById('fileTypeIcon');
+
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+
+    // Set file type icon
+    const extension = file.name.split('.').pop().toUpperCase();
+    fileTypeIcon.textContent = extension;
+
+    fileInfo.classList.add('show');
+  }
+
+  // Format file size
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Remove selected file
+  function removeFile() {
+    selectedFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('fileInfo').classList.remove('show');
+    document.getElementById('submitBtn').disabled = true;
+    hideStatus();
+  }
+
+  // Clear submission
+  function clearSubmission() {
+    removeFile();
+    hideStatus();
+  }
+
+  // Submit assignment
+  function submitAssignment() {
+    if (!selectedFile) {
+      showStatus('Please select a file to submit', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    // Simulate submission process
+    setTimeout(() => {
+      showStatus('Assignment submitted successfully!', 'success');
+      submitBtn.classList.remove('loading');
+      submitBtn.innerHTML = '<i class="fas fa-check"></i> Submitted';
+
+      // Reset after delay
+      setTimeout(() => {
+        clearSubmission();
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Assignment';
+      }, 3000);
+    }, 2000);
+  }
+
+  // Show status message
+  function showStatus(message, type) {
+    const statusMessage = document.getElementById('statusMessage');
+    const statusContent = document.getElementById('statusContent');
+
+    statusContent.textContent = message;
+    statusMessage.className = `status-message status-${type} show`;
+  }
+
+  // Hide status message
+  function hideStatus() {
+    const statusMessage = document.getElementById('statusMessage');
+    statusMessage.classList.remove('show');
+  }
+
+  // Drag and drop functionality
+  const uploadArea = document.getElementById('uploadArea');
+
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+  });
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (validateFile(file)) {
+        selectedFile = file;
+        displayFileInfo(file);
+        showStatus('File selected successfully', 'success');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    }
+  });
+</script>
+</body>
+</html>

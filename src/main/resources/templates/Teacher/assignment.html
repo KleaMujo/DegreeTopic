@@ -159,17 +159,7 @@
                             <input type="date" id="dueDate" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="points" class="form-label">Points</label>
-                            <select class="form-select" name="points" id="points" required>
-                                <option disabled selected value="">Select points</option>
-                                <option>10</option>
-                                <option>50</option>
-                                <option>100</option>
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -252,7 +242,7 @@
         const assignmentDto = {
             studentId: document.getElementById("recipient").value,
             dueDate: document.getElementById("dueDate").value,
-            points: document.getElementById("points").value,
+
             assignmentTitle: document.getElementById("assignmentTitle").value,
             assignmentDescription: document.getElementById("assignmentDescription").value,
             linkUrl: document.getElementById("hiddenLinkUrl").value,

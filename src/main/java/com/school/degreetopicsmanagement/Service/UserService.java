@@ -20,4 +20,10 @@ public class UserService {
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
         return user.getUsername();
     }
+
+
+    public String getUsername1( Long id ){
+        User user = userRepository.findById(id).get();
+        return user.getUsername();
+    }
 }

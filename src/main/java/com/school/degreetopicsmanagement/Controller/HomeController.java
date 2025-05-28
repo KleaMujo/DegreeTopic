@@ -159,5 +159,20 @@ public class HomeController {
         return modelAndView;
 
     }
+
+
+    @GetMapping(value = "/viewNotificationsStudent")
+    public ModelAndView viewNotificationsStudent(HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+
+        modelAndView.addObject("studentId", user.getId());
+
+        modelAndView.setViewName("Student/viewNotificationsStudent");
+        return modelAndView;
+    }
+
+
 }
 

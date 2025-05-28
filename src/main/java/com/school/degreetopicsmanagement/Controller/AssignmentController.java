@@ -1,7 +1,6 @@
 package com.school.degreetopicsmanagement.Controller;
 
 import com.school.degreetopicsmanagement.DataObjects.AssignmentDto;
-import com.school.degreetopicsmanagement.DataObjects.MessageDTO;
 import com.school.degreetopicsmanagement.Model.*;
 import com.school.degreetopicsmanagement.Repository.AssignmentRepository;
 import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
@@ -90,7 +89,7 @@ public class AssignmentController {
         Assignment assignment = new Assignment();
         assignment.setTeacherId(user.getId());
         assignment.setStudentId(assignmentDto.getStudentId());
-        assignment.setPoints(assignmentDto.getPoints());
+
         assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
         assignment.setAssignmentDescription(assignmentDto.getAssignmentDescription());
         assignment.setFileName(fileName); // Save just the file name
@@ -120,4 +119,78 @@ public class AssignmentController {
         return "success";
 
      }
+
+    @PostMapping(value = "/editAssignment", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    public ResponseEntity<String> editAssignment(
+            @RequestParam(value = "id") Long assignmentId,
+            @RequestPart("assignmentDto") AssignmentDto assignmentDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new RuntimeException("Assignment not found"));
+        System.out.println("Assignment id " + assignmentId);
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            Path uploadPath = Paths.get("/home/data/DegreeTopic/");
+            try {
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                assignment.setFileName(fileName);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("File upload failed: " + e.getMessage());
+            }
+        }
+
+        assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
+        assignment.setAssignmentDescription(assignmentDto.getAssignmentDescription());
+        assignment.setDate(assignmentDto.getDate());  // note you used 'dueDate' in JS, use it consistently
+        assignment.setLinkUrl(assignmentDto.getLinkUrl());
+        assignment.setLinkText(assignmentDto.getLinkText());
+
+        System.out.println("Assignment Description: " + assignment.getAssignmentDescription());
+
+        assignmentRepository.save(assignment);
+
+        return ResponseEntity.ok("Assignment edited and file saved successfully.");
+    }
+
+
+
+    @GetMapping(value = "/viewAssignments")
+    public ModelAndView viewAssignments(HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+
+        List<Assignment> assignments = assignmentRepository.findAllByStudentIdOrderByDateDesc(user.getId());
+        modelAndView.addObject("assignments", assignments);
+
+
+        modelAndView.addObject("studentId", user.getId());
+
+        modelAndView.setViewName("Student/viewAssignments");
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/assignmentAnswer")
+    public ModelAndView assignmentAnswer( @RequestParam(value="assignmentId")Long id, HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+
+        Assignment assignment = assignmentRepository.findById(id).get();
+
+        modelAndView.addObject("assignment", assignment);
+        modelAndView.addObject("studentId", user.getId());
+
+
+        modelAndView.setViewName("Student/assignmentAnswer");
+        return modelAndView;
+    }
+
 }
