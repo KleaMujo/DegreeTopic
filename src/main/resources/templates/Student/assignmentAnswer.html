@@ -466,6 +466,7 @@
             <i class="fas fa-file-alt"></i>
           </div>
           <div>
+          <div>
             <h2 class="assignment-title" th:text="${assignment.getAssignmentTitle()}">Advanced Data Structures and Algorithms</h2>
             <div class="assignment-meta">
               <div class="meta-item">
@@ -478,12 +479,10 @@
                 <span>Due 11:59 PM</span>
               </div>
               <div class="meta-divider"></div>
-              <div class="meta-item">
-                <i class="fas fa-user"></i>
-                <span th:text="${assignment.getTeacherId()}">Dr. Johnson</span>
-              </div>
+
             </div>
           </div>
+          <h3 id="submissionStatusTitle"></h3></div>
         </div>
       </div>
 
@@ -498,6 +497,12 @@
         <div id="statusMessage" class="status-message">
           <div id="statusContent"></div>
         </div>
+
+        <div class="form-group">
+          <label  class="form-label">Assignment Title</label>
+          <input id="assignmentTitle" class="form-control"></input>
+        </div>
+
 
 
         <div class="form-group">
@@ -515,22 +520,38 @@
           <div class="upload-description">
             Supported formats: PDF, DOC, DOCX, TXT (Maximum size: 25MB)
           </div>
-          <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(event)">
-        </div>
+          <input type="file" id="fileInput" class="file-input" name="file"
+                 accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+                 onchange="handleFileSelect(event)">        </div>
 
-        <!-- File Information -->
-        <div id="fileInfo" class="file-info">
+<!--from our db -->
+        <div id="fileInfo" class="file-info" th:each="a : ${Answerassignmemts}">
           <div class="file-details">
-            <div id="fileTypeIcon" class="file-type-icon">PDF</div>
+            <div id="fileTypeIcon" class="file-type-icon"> </div>
             <div class="file-meta">
-              <div id="fileName" class="file-name">assignment.pdf</div>
-              <div id="fileSize" class="file-size">2.4 MB</div>
+              <div id="fileName" class="file-name" th:text="${a.getFileName()}" ></div>
+
             </div>
             <button type="button" class="remove-file" onclick="removeFile()">
               <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
+
+        <!-- File Information that fills from the js from what we choose -->
+        <div id="fileInfo" class="file-info">
+          <div class="file-details">
+            <div id="fileTypeIcon" class="file-type-icon">PDF</div>
+            <div class="file-meta">
+              <div id="fileName" class="file-name"></div>
+              <div id="fileSize" class="file-size"></div>
+            </div>
+            <button type="button" class="remove-file" onclick="removeFile()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
 
         <!-- Action Buttons -->
         <div class="button-group">
@@ -548,34 +569,101 @@
   </div>
 </main>
 
+<input type="hidden" th:value="${assignment.getId()}" id="assignmentId">
+<script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script>
+  function submitAssignment() {
+    if (!selectedFile) {
+      showStatus('Please select a file to submit', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    const assignmentDto = {
+      assignmentDescription: document.getElementById("assignmentDescription").value,
+      assignmentTitle: document.getElementById("assignmentTitle").value,
+      fileName: file ? file.name : null
+    };
+
+    const formData = new FormData();
+    formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {
+      type: "application/json"
+    }));
+    if (file) {
+      formData.append("file", file);
+    }
+
+    const assignmentId = document.getElementById("assignmentId").value;
+
+    $.ajax({
+      type: "POST",
+      url: "/assignmentAnswer?assignmentId=" + assignmentId,
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        console.log("Assignment created successfully");
+
+        // Expecting server to return response.status = "Late" or "In Time"
+        const status = response.status;
+        const title = status === "Late"
+                ? "❌ Assignment Submitted (Late)"
+                : "✅ Assignment Submitted (In Time)";
+
+        const statusElement = document.getElementById("submissionStatusTitle");
+        if (statusElement) {
+          statusElement.textContent = title;
+          statusElement.style.fontSize = "0.9rem"; // You can change to "12px", "small", etc.
+        }
+
+        showStatus('Assignment submitted successfully!', 'success');
+
+        submitBtn.classList.remove('loading');
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> Submitted';
+
+        setTimeout(() => {
+          clearSubmission();
+          submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Assignment';
+        }, 3000);
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        showStatus("An error occurred while submitting the assignment", "error");
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Assignment';
+      }
+    });
+  }
+</script>
+
 <script>
   let selectedFile = null;
 
-  // File selection handler
-  function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (file) {
-      if (validateFile(file)) {
-        selectedFile = file;
-        displayFileInfo(file);
-        showStatus('File selected successfully', 'success');
-        document.getElementById('submitBtn').disabled = false;
-      }
-    }
-  }
 
-  // File validation
   function validateFile(file) {
     const maxSize = 25 * 1024 * 1024; // 25MB
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
-
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif'
+    ];
     if (file.size > maxSize) {
       showStatus('File size exceeds 25MB limit', 'error');
       return false;
     }
 
     if (!allowedTypes.includes(file.type)) {
-      showStatus('Unsupported file format. Please use PDF, DOC, DOCX, or TXT', 'error');
+      showStatus('Unsupported file format. Only PDF and image files (JPG, PNG, GIF) are allowed.', 'error');
       return false;
     }
 
@@ -592,7 +680,7 @@
     fileName.textContent = file.name;
     fileSize.textContent = formatFileSize(file.size);
 
-    // Set file type icon
+    // Set file type icon/label
     const extension = file.name.split('.').pop().toUpperCase();
     fileTypeIcon.textContent = extension;
 
@@ -623,30 +711,16 @@
     hideStatus();
   }
 
-  // Submit assignment
-  function submitAssignment() {
-    if (!selectedFile) {
-      showStatus('Please select a file to submit', 'error');
-      return;
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      if (validateFile(file)) {
+        selectedFile = file;
+        displayFileInfo(file);
+
+        document.getElementById('submitBtn').disabled = false;
+      }
     }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.classList.add('loading');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-
-    // Simulate submission process
-    setTimeout(() => {
-      showStatus('Assignment submitted successfully!', 'success');
-      submitBtn.classList.remove('loading');
-      submitBtn.innerHTML = '<i class="fas fa-check"></i> Submitted';
-
-      // Reset after delay
-      setTimeout(() => {
-        clearSubmission();
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Assignment';
-      }, 3000);
-    }, 2000);
   }
 
   // Show status message
@@ -681,16 +755,9 @@
     uploadArea.classList.remove('dragover');
 
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      if (validateFile(file)) {
-        selectedFile = file;
-        displayFileInfo(file);
-        showStatus('File selected successfully', 'success');
-        document.getElementById('submitBtn').disabled = false;
-      }
-    }
+
   });
 </script>
+
 </body>
 </html>

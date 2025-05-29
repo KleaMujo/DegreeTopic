@@ -2,6 +2,7 @@ package com.school.degreetopicsmanagement.Controller;
 
 import com.school.degreetopicsmanagement.DataObjects.AssignmentDto;
 import com.school.degreetopicsmanagement.Model.*;
+import com.school.degreetopicsmanagement.Repository.AssignmentAnswerRepository;
 import com.school.degreetopicsmanagement.Repository.AssignmentRepository;
 import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
 import com.school.degreetopicsmanagement.Repository.UserRepository;
@@ -188,9 +189,60 @@ public class AssignmentController {
         modelAndView.addObject("assignment", assignment);
         modelAndView.addObject("studentId", user.getId());
 
+        List<AssignmentAnswer> as = assignmentAnswerRepository.findByStudentId(user.getId());
+        modelAndView.addObject("Answerassignmemts", as );
 
         modelAndView.setViewName("Student/assignmentAnswer");
         return modelAndView;
     }
+
+    @Autowired
+    private AssignmentAnswerRepository assignmentAnswerRepository;
+
+    @PostMapping(value = "/assignmentAnswer", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    public ResponseEntity<String> assignmentAnswer(
+            @RequestParam(value = "assignmentId") Long assignmentId,
+            @RequestPart("assignmentDto") AssignmentDto assignmentDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new RuntimeException("Assignment not found"));
+        System.out.println("Assignment id " + assignmentId);
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        if (file != null && !file.isEmpty()) {
+            Path uploadPath = Paths.get("/home/data/DegreeTopic/");
+            try {
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("File upload failed: " + e.getMessage());
+            }
+        }
+
+        AssignmentAnswer assignmentAnswer = new AssignmentAnswer();
+        assignmentAnswer.setAssignmentTitle(assignmentDto.getAssignmentTitle());
+        assignmentAnswer.setAssignmentDescription(assignmentDto.getAssignmentDescription());
+        assignmentAnswer.setDate(new Date());
+        assignmentAnswer.setStudentId(user.getId());
+        assignmentAnswer.setAssignmentId(assignment.getId());
+        assignmentAnswer.setFileName(fileName);
+
+
+        assignmentAnswerRepository.save(assignmentAnswer);
+
+
+        return ResponseEntity.ok("Assignment edited and file saved successfully.");
+    }
+
+
+
 
 }
