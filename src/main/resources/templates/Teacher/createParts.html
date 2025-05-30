@@ -10,7 +10,17 @@
 
     <style>
 
-
+        h3 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 30px 0 15px 0;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
 
         h2{
             letter-spacing: .0178571429em;
@@ -230,18 +240,7 @@
             cursor: pointer;
         }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 30px;
-            right: 0;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            display: none;
-            z-index: 100;
-            min-width: 100px;
-        }
+
 
         .dropdown-menu.show {
             display: block;
@@ -259,6 +258,51 @@
         .dropdown-menu button:hover {
             background-color: #f0f0f0;
         }
+
+
+
+
+
+        .dropdown-menu {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 100;
+            min-width: 100px;
+        }
+
+        .dropdown-menu .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem 1rem;
+            font-size: 0.95rem;
+            width: 100%;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .edit-btn {
+            color: #2c7be5;
+        }
+
+        .delete-btn {
+            color: #e55353;
+        }
+
+
     </style>
 </head>
 <body>
@@ -290,32 +334,55 @@
 
             </div>
 
+        <div th:each="entry : ${assignmentsByDegree}">
+            <h3 style="cursor:pointer;" th:text="${entry.key}" onclick="toggleAssignments(this)"></h3>
 
+            <div class="assignment-group" style="display:none;">
+                <div class="card" th:each="a : ${entry.value}">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="menu-icon">
+                                <!-- icon here -->
+                            </div>
+                            <div>
+                                <h2  th:text="${user + ' posted a new assignment: ' + a.assignmentTitle}"></h2>
+                            </div>
+                        </div>
+                        <div class="meta" style="font-size: 0.9rem; color: #777;" th:text="${#dates.format(a.date, 'dd MMM')}"></div>
+                    </div>
 
-        <div class="card" th:each="a : ${assignments}">
-            <div class="card-header">
-              <div style="display: flex;gap: 10px">
-                <div class="menu-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                         fill="currentColor" class="icon">
-                        <path d="M7 15h10v2H7zM7 11h10v2H7zM7 7h10v2H7z"/>
-                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14c0
-             1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V5h14v14H5z"/>
-                    </svg>
+                    <!-- ✅ Show answer if exists -->
+                    <div th:if="${assignmentAnswers.containsKey(a.id)}" style="margin-top: 10px; padding-left: 20px;">
+                        <a th:href="@{'/assignmentAnswers?id=' + ${assignmentAnswers[a.id].id}}" style="text-decoration: none; color: #007bff;">
+                            Submitted Answer: <span th:text="${assignmentAnswers[a.id].assignmentTitle}" style="font-weight: 500;"></span>
+                        </a>
+                    </div>
+
+                    <div class="options-container" style=" margin-top: 10px;">
+                    <button class="options-btn" onclick="toggleDropdown(this)">⋮</button>
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item edit-btn" onclick="editItem(this)" th:attr="data-id=${a.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="dropdown-item delete-btn" onclick="deleteItem(this)" th:attr="data-id=${a.id}">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
                 </div>
-                <h2 th:text="${user +'  posted a new assignment :' +  a.getAssignmentTitle()}"></h2>
             </div>
-                <div class="meta"  th:text="${#dates.format(a.date, 'dd MMM')}"></div>
-           </div>
 
-            <div class="options-container">
-                <button class="options-btn" onclick="toggleDropdown(this)">⋮</button>
-                <div class="dropdown-menu">
-                    <button onclick="editItem(this)"  th:attr="data-id=${a.id}">Edit</button>
-                    <button onclick="deleteItem(this)"  th:attr="data-id=${a.id}">Delete</button>
+
+
                 </div>
+
             </div>
         </div>
+
+
+    </div>
+            </div>
+        </div>
+
 
     </div>
     </div>
@@ -371,5 +438,22 @@
         });
     }
 </script>
+<script>
+    function toggleAssignments(header) {
+        const assignmentList = header.nextElementSibling;
+        if (assignmentList.style.display === 'none') {
+            assignmentList.style.display = 'block';
+        } else {
+            assignmentList.style.display = 'none';
+        }
+    }
+
+    function toggleDropdown(button) {
+        const menu = button.nextElementSibling;
+        menu.classList.toggle('show');
+    }
+</script>
+
+
 </body>
 </html>

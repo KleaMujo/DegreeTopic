@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignment Answer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5 p-4 bg-white rounded shadow-sm">
+    <h2 class="mb-4 text-center">Assignment Answer</h2>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Assignment Title:</label>
+        <div class="form-control-plaintext" th:text="${assignmentAnswer.assignmentTitle}">Sample Title</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Student ID:</label>
+        <div class="form-control-plaintext" th:text="${assignmentAnswer.studentId}">12345</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Submission Date:</label>
+        <div class="form-control-plaintext" th:text="${#dates.format(assignmentAnswer.date, 'dd-MM-yyyy')}">30-05-2025</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Assignment Description:</label>
+        <div class="form-control bg-light p-3 rounded" th:text="${assignmentAnswer.assignmentDescription}">
+            This is a detailed answer or explanation written by the student.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">File Name:</label>
+        <div class="form-control-plaintext" th:text="${assignmentAnswer.fileName}">answer.docx</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Assignment ID:</label>
+        <div class="form-control-plaintext" th:text="${assignmentAnswer.assignmentId}">10</div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="/download/${assignmentAnswer.fileName}" class="btn btn-primary">
+            Download Submitted File
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

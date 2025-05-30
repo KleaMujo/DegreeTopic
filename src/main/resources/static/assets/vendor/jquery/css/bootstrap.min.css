@@ -16073,5 +16073,8 @@ body {
     flex: 1;
     padding: 30px;
 }
+.main-content{
+    display: flex;
+}
 
 /*# sourceMappingURL=bootstrap.min.css.map */

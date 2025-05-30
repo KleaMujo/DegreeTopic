@@ -52,31 +52,6 @@
             color: white;
         }
 
-        .navbar {
-            display: flex;
-            flex: 1;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 30px;
-            background-color: #ffffff;
-        }
-
-        .user-dropdown {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
 
         .dropdown-content {
             display: none;
@@ -156,6 +131,11 @@
             color: var(--primary-color);
             margin: 0;
         }
+
+        .sidebar {
+            margin-top: -77px!important;
+        }
+
     </style>
 
 </head>
@@ -241,6 +221,7 @@
                         url: "/addStatusActive?id=" + requestId,
                         timeout: 1500,
                         success: function () {
+                            window.location.reload();
                             resolve();
                         },
                         error: function () {

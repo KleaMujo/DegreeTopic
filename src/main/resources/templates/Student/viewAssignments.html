@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -254,15 +255,22 @@
             display: block;
         }
 
+        .sidebar{
+            margin-top: 0px!important;
+         }
     </style>
 </head>
 <body>
-<div class="page-header">
-    <div class="container">
-        <h1 class="page-title">Academic Assignments</h1>
-        <p class="page-subtitle">Review and manage your coursework assignments</p>
-    </div>
-</div>
+
+
+<div class="main-content" style="display: flex">
+    <div th:replace="/Student/sidebarStudent.html"></div>
+
+    <!-- Content -->
+    <div class="content">
+
+
+
 
 <div class="container assignments-container">
     <div th:if="${assignments.isEmpty()}" class="no-assignments">

@@ -15,24 +15,26 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class DegreeTopicController {
 
- @Autowired
- DegreeTopicRespository degreeTopicRespository;
+    @Autowired
+    DegreeTopicRespository degreeTopicRespository;
 
- @Autowired
- UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
- @Autowired
- DegreeTopicRequestRepository degreeTopicRequestRepository;
+    @Autowired
+    DegreeTopicRequestRepository degreeTopicRequestRepository;
 
- @Autowired
- private AssignmentRepository assignmentRepository;
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private AssignmentAnswerRepository assignmentAnswerRepository;
 
     @GetMapping(value="/addDegreeTopic")
     public ModelAndView  addDegreeTopic(ModelAndView modelAndView, HttpServletRequest httpServletRequest){
@@ -177,8 +179,33 @@ public class DegreeTopicController {
             modelAndView.addObject("user",user.getUsername());
         }
 
-        List <Assignment> assignments = assignmentRepository.findByTeacherId(user.getId());
-        modelAndView.addObject("assignments", assignments);
+        Map<String, List<Assignment>> assignmentsByDegree = new HashMap<>();
+
+        List<Assignment> assignments = assignmentRepository.findByTeacherId(user.getId());
+
+        Map<Long, AssignmentAnswer> assignmentAnswers = new HashMap<>();
+
+        for (Assignment assignment : assignments) {
+            Long studentId = assignment.getStudentId();
+            User user1 = userRepository.findById(studentId).get();
+            DegreeTopicRequest request = degreeTopicRequestRepository.findByStudentIdAndStatus(user1, "ACTIVE");
+
+            if (request != null) {
+                DegreeTopic degree = request.getDegreeTopic();
+                assignmentsByDegree.computeIfAbsent(degree.getTitle(), k -> new ArrayList<>()).add(assignment);
+            }
+
+            AssignmentAnswer assignmentAnswer = assignmentAnswerRepository.findByAssignmendId(assignment.getId());
+            if (assignmentAnswer != null) {
+                assignmentAnswers.put(assignment.getId(), assignmentAnswer);
+            }
+        }
+
+        modelAndView.addObject("assignmentsByDegree", assignmentsByDegree);
+        modelAndView.addObject("assignmentAnswers", assignmentAnswers);
+
+
+
 
 
         modelAndView.setViewName("Teacher/createParts");

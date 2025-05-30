@@ -112,7 +112,7 @@ public class HomeController {
                 .filter(topic -> topic.getDegreeTopicRequests().stream()
                         .noneMatch(request -> "ACTIVE".equalsIgnoreCase(request.getStatus())))
                 .collect(Collectors.toList());
-
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
 
         modelAndView.addObject("studentId", user.getId());
         modelAndView.addObject("degreeTopics", filteredTopics);

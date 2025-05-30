@@ -9,29 +9,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
+<style>
+    .sidebar {
+        width: 250px!important;
+        background-color: #2c3e50!important;
+        color: #fff;
+        min-height: 100vh;
+        margin-top: 0px!important;
+    }
+</style>
 <body>
-<!-- Header with Logo and Navbar -->
-<header class="header">
-    <div class="logo-container">
-        <div class="degree-icon">🎓</div>
-    </div>
-    <div class="navbar">
-        <div class="user-dropdown">
-            <div class="user-avatar">A</div>
-            <div class="dropdown-content">
-                <a href="#"><i class="fas fa-user me-2"></i> Profile</a>
-                <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
-                <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
-            </div>
-        </div>
-    </div>
-</header>
-
 <!-- Main Content Container -->
-<div th:replace="/Teacher/sidebarTeacher.html"></div>
-
+<div class="main-container">
+    <div th:replace="/Teacher/sidebarTeacher.html"></div>
 
     <!-- Main Content -->
+    <div class="content">
+    </div>
+</div>
 </div>
 </body>
 </html>

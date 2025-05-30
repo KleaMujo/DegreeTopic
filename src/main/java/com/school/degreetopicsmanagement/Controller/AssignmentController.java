@@ -53,9 +53,11 @@ public class AssignmentController {
         for (DegreeTopic degreeTopic : degreeTopicList) {
             List<DegreeTopicRequest> degreeTopicRequests = degreeTopic.getDegreeTopicRequests();
             for (DegreeTopicRequest degreeTopicRequest : degreeTopicRequests) {
-                User std = degreeTopicRequest.getStudent();
-                studentNames.add(std);
-                modelAndView.addObject("studentNames", studentNames);
+                if (degreeTopicRequest.getStatus().equals("ACTIVE")) {
+                    User std = degreeTopicRequest.getStudent();
+                    studentNames.add(std);
+                    modelAndView.addObject("studentNames", studentNames);
+                }
             }
         }
         modelAndView.setViewName("Teacher/assignment");
@@ -164,6 +166,7 @@ public class AssignmentController {
 
     @GetMapping(value = "/viewAssignments")
     public ModelAndView viewAssignments(HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
@@ -244,5 +247,14 @@ public class AssignmentController {
 
 
 
+    @GetMapping(value="/assignmentAnswers")
+    public ModelAndView assignmentAnswers (@RequestParam(value="id")Long id,ModelAndView modelAndView){
+
+        AssignmentAnswer assignmentAnswer = assignmentAnswerRepository.findById(id).get();
+        modelAndView.addObject("assignmentAnswer", assignmentAnswer);
+
+        modelAndView.setViewName("Student/assignmentAnswers1");
+        return modelAndView;
+    }
 
 }
