@@ -28,7 +28,7 @@ public class AssignmentAnswer {
     private String assignmentTitle;
 
     @Lob
-    @Column(name="assignment_description")
+    @Column(name="assignment_description", columnDefinition = "TEXT")
     private String assignmentDescription;
 
     @Column(name="file_name")

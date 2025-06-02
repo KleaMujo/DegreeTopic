@@ -2,10 +2,7 @@ package com.school.degreetopicsmanagement.Controller;
 
 import com.school.degreetopicsmanagement.DataObjects.AssignmentDto;
 import com.school.degreetopicsmanagement.Model.*;
-import com.school.degreetopicsmanagement.Repository.AssignmentAnswerRepository;
-import com.school.degreetopicsmanagement.Repository.AssignmentRepository;
-import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
-import com.school.degreetopicsmanagement.Repository.UserRepository;
+import com.school.degreetopicsmanagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,9 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class AssignmentController {
@@ -40,6 +35,9 @@ public class AssignmentController {
     @Autowired
     DegreeTopicRespository degreeTopicRespository;
 
+    @Autowired
+    DegreeTopicRequestRepository degreeTopicRequestRepository;
+
     @GetMapping(value="/assignment")
     public ModelAndView assignment(ModelAndView modelAndView, HttpServletRequest httpServletRequest) {
         modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
@@ -49,17 +47,24 @@ public class AssignmentController {
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
         List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
-        List<User> studentNames = new ArrayList<>();
+        Map<User, String> studentDegreeMap = new HashMap<>();
+
         for (DegreeTopic degreeTopic : degreeTopicList) {
             List<DegreeTopicRequest> degreeTopicRequests = degreeTopic.getDegreeTopicRequests();
             for (DegreeTopicRequest degreeTopicRequest : degreeTopicRequests) {
-                if (degreeTopicRequest.getStatus().equals("ACTIVE")) {
-                    User std = degreeTopicRequest.getStudent();
-                    studentNames.add(std);
-                    modelAndView.addObject("studentNames", studentNames);
+                if ("ACTIVE".equals(degreeTopicRequest.getStatus())) {
+                    User student = degreeTopicRequest.getStudent();
+                    DegreeTopicRequest request = degreeTopicRequestRepository.findByStudentIdAndStatus(student, "ACTIVE");
+
+                     if (request != null) {
+                        studentDegreeMap.put(student, request.getDegreeTopic().getTitle());
+                    }
                 }
             }
         }
+
+        modelAndView.addObject("studentDegreeMap", studentDegreeMap);
+
         modelAndView.setViewName("Teacher/assignment");
         return modelAndView;
     }

@@ -31,7 +31,7 @@ public class Assignment {
     @Column(name="assignment_title")
     private String assignmentTitle;
 
-    @Column(name="assignment_description")
+    @Column(name="assignment_description", columnDefinition = "TEXT")
     private String assignmentDescription;
 
     @Column(name="file_name")

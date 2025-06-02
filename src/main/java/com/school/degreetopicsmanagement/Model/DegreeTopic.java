@@ -25,7 +25,7 @@ public class DegreeTopic {
     private String title;
 
 
-    @Column(name="description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     // Many DegreeTopics are supervised by one teacher (User)

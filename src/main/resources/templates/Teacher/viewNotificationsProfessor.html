@@ -181,6 +181,9 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function send(){
         var message = {};
@@ -198,6 +201,15 @@
             cache: false,
             timeout: 1500,
             success: function (response) {
+                Swal.close();
+                Swal.fire({
+                    title: 'Success!',
+                    text: response,
+                    icon: 'success',
+                }).then(function () {
+                    button.disabled = false;
+                    location.reload();
+                });
             },
             error: function (error) {
 
@@ -222,8 +234,17 @@
             cache: false,
             timeout: 1500,
             success: function (response) {
-
+                Swal.close();
+                Swal.fire({
+                    title: 'Success!',
+                    text: response,
+                    icon: 'success',
+                }).then(function () {
+                    button.disabled = false;
+                    location.reload();
+                });
             },
+
             error: function (error) {
 
             }

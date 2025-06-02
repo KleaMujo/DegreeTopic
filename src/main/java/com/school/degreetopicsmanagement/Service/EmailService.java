@@ -18,8 +18,18 @@ public class EmailService {
     public void sendVerificationCode(String email, String code) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("EasyBill 2FA Verification Code");
-        message.setText("Your verification code is: " + code);
+        message.setSubject("Email Verification for Degree Topics Management");
+
+        String body =
+                  "Thank you for registering with the Degree Topics Management System.\n"
+                + "To complete your registration, please use the following verification code:\n\n"
+                + code + "\n\n"
+                + "If you did not request this code, please disregard this email.\n\n"
+                + "Best regards,\n"
+                + "Degree Topics Management Team";
+
+        message.setText(body);
         mailSender.send(message);
     }
+
 }

@@ -149,7 +149,7 @@
                             <label for="recipient" class="form-label">Recipient</label>
                             <select class="form-select" name="recipient" id="recipient" required>
                                 <option disabled selected value="">-- Select a student --</option>
-                                <option th:each="name : ${studentNames}" th:value="${name.getId()}" th:text="${name.getUsername()}"></option>
+                                <option th:each="name : ${studentDegreeMap}" th:value="${name.key.id}" th:text="${name.key.username + ' - ' + name.value}"></option>
                             </select>
                         </div>
                     </div>
@@ -233,6 +233,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 
     function createAssignment() {
@@ -242,13 +244,20 @@
         const assignmentDto = {
             studentId: document.getElementById("recipient").value,
             dueDate: document.getElementById("dueDate").value,
-
             assignmentTitle: document.getElementById("assignmentTitle").value,
             assignmentDescription: document.getElementById("assignmentDescription").value,
             linkUrl: document.getElementById("hiddenLinkUrl").value,
             linkText: document.getElementById("hiddenLinkText").value,
             fileName: file ? file.name : null
         };
+
+        console.log("Student ID:", assignmentDto.studentId);
+        console.log("Due Date:", assignmentDto.dueDate);
+        console.log("Title:", assignmentDto.assignmentTitle);
+        console.log("Description:", assignmentDto.assignmentDescription);
+        console.log("Link URL:", assignmentDto.linkUrl);
+        console.log("Link Text:", assignmentDto.linkText);
+        console.log("File Name:", assignmentDto.fileName);
 
         const formData = new FormData();
         formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {
@@ -267,6 +276,15 @@
             contentType: false,
             success: function (response) {
                 console.log("Assignment created successfully");
+                Swal.close();
+                Swal.fire({
+                    title: 'Success!',
+                    text: response,
+                    icon: 'success',
+                }).then(function () {
+                    button.disabled = false;
+                    location.reload();
+                });
             },
             error: function (error) {
                 console.error("Error:", error);
