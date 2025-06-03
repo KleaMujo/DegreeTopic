@@ -11,7 +11,7 @@
     <groupId>com.school</groupId>
     <artifactId>DegreeTopicsManagement</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>DegreeTopicsManagement</name>
     <description>DegreeTopicsManagement</description>
     <properties>
