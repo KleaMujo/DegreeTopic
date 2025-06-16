@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professor Notifications</title>
+  <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+
+
+
+
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .top-nav-buttons {
+      margin-bottom: 20px;
+    }
+
+    .top-nav-buttons button {
+      margin-right: 10px;
+    }
+
+    .form-group, .form-actions {
+      margin: 15px 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    :root {
+      --primary-color: #5156be;
+      --secondary-color: #5156be;
+      --light-color: #f5f5f5;
+      --text-color: #333;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: var(--light-color);
+    }
+    /* Header Navbar Styles */
+
+
+    .degree-icon {
+      font-size: 32px;
+      color: white;
+    }
+
+
+    /* Main Content Wrapper */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+    /* Sidebar Styles */
+
+    .page-title {
+      margin-bottom: 20px;
+      color: var(--primary-color);
+    }
+    .content-section {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .content-section p {
+      line-height: 1.6;
+      color: #333;
+    }
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+    .btn-primary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    .btn-secondary {
+      background-color: #95a5a6;
+      color: white;
+      margin-left: 10px;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    /* Navigation styles */
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .me-2 {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<!-- Header with Logo and Navbar -->
+<header class="header">
+
+  <div class="navbar">
+    <div class="user-dropdown">
+      <div class="user-avatar">A</div>
+      <div class="dropdown-content">
+        <a href="#"><i class="fas fa-user me-2"></i> Profile</a>
+        <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+        <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content Container -->
+<div class="main-container">
+  <div th:replace="/Student/sidebarStudent.html"></div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div id="notifications" class="content-section active">
+      <h1 class="page-title">Send Message</h1>
+      <div class="form-group">
+        <label for="recipient">Select :</label>
+        <select name="recipient" id="recipient" required>
+          <option disabled selected value="">-- Select a student --</option>
+          <option th:each="degreeTopic : ${degreeTopic}"
+                  th:value="${@userService.getUsername1(degreeTopic.getTeacher())}"
+                  th:text="${degreeTopic.getTitle() + ' - ' + @userService.getUsername1(degreeTopic.getTeacher())}">
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message" placeholder="Enter your message" required />
+      </div>
+      <div class="form-actions">
+        <button type="button" onclick="send()" class="btn btn-primary">
+          <i class="fas fa-paper-plane me-2"></i>Send
+        </button>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  function send(){
+    var message = {};
+
+    message.messageToDTO = document.getElementById("recipient").value;
+    message.messageDTO = document.getElementById("message").value;
+    console.log(message.messageDTO + " " + message.messageTo)
+    $.ajax({
+      type: "POST",
+      contentType: "application/json",
+      headers: { 'x-my-custom-header': 'some value' },
+      url: "/addMessage",
+      data: JSON.stringify(message),
+      dataType: 'json',
+      cache: false,
+      timeout: 1500,
+      success: function (response) {
+        Swal.close();
+        Swal.fire({
+          title: 'Success!',
+          text: response,
+          icon: 'success',
+        }).then(function () {
+          button.disabled = false;
+          location.reload();
+        });
+      },
+      error: function (error) {
+
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -11,7 +11,9 @@ import java.util.List;
 public class MessageDTO {
 
     private String messageDTO;
-    private String studentDTO;
+    private String messageToDTO;
+    private String messageFromDTO;
+
     private DegreeTopic degreeTopic; // the topic associated with the student
 
 }

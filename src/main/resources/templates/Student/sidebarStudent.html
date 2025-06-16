@@ -16,6 +16,11 @@
                 <i class="fas fa-graduation-cap me-2"></i> See All Degrees Topic
             </a>
         </li>
+        <li class="nav-item" th:classappend="${currentPath == '/notifications'} ? ' active'">
+            <a class="nav-link" href="/notifications">
+                <i class="fas fa-plus me-2"></i> Messages
+            </a>
+        </li>
         <li class="nav-item" th:classappend="${currentPath == '/viewAssignments'} ? ' active'">
             <a class="nav-link" href="/viewAssignments">
                 <i class="fas fa-plus me-2"></i> View Assignments

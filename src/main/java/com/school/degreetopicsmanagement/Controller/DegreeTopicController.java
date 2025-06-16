@@ -6,10 +6,12 @@ import com.school.degreetopicsmanagement.DataObjects.MessageDTO;
 import com.school.degreetopicsmanagement.Model.*;
 import com.school.degreetopicsmanagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -103,6 +105,27 @@ public class DegreeTopicController {
 
         modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
 
+        // Fetch messages where professor is sender or recipient
+        List<Message> messageTo = messageRepository.findAllByMessageTo(user.getUsername());
+        List<Message> messageFrom = messageRepository.findAllByMessageFrom(user.getUsername());
+
+        // Combine all messages
+        List<Message> allMessages = new ArrayList<>();
+        allMessages.addAll(messageTo);
+        allMessages.addAll(messageFrom);
+
+        Map<String, List<Message>> groupedMessages = allMessages.stream()
+                .filter(msg -> msg.getMessageFrom() != null && msg.getMessageTo() != null) // Filter out invalid messages
+                .sorted(Comparator.comparing(Message::getDate).reversed())
+                .collect(Collectors.groupingBy(msg ->
+                                msg.getMessageFrom().equals(user.getUsername())
+                                        ? msg.getMessageTo()
+                                        : msg.getMessageFrom(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+
         List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
         List<MessageDTO> messageDTOList = new ArrayList<>();
 
@@ -113,18 +136,21 @@ public class DegreeTopicController {
                 DegreeTopic degreeTopic1 = degreeTopicRequest.getDegreeTopic();
 
                 MessageDTO messageDTO = new MessageDTO();
-                messageDTO.setStudentDTO(student.getUsername());
+                messageDTO.setMessageToDTO(student.getUsername());
                 messageDTO.setDegreeTopic(degreeTopic1);
-                messageDTO.setStudentDTO(student.getUsername());
-                messageDTOList.add(messageDTO);
+                 messageDTOList.add(messageDTO);
             }
         }
 
         modelAndView.addObject("messageDTOList", messageDTOList);
+
+        // Pass grouped messages to the view
+        modelAndView.addObject("groupedMessages", groupedMessages);
         modelAndView.setViewName("/Teacher/viewNotificationsProfessor");
 
         return modelAndView;
     }
+
 
 
     @Autowired
@@ -132,32 +158,34 @@ public class DegreeTopicController {
 
     @PostMapping(value = "/addMessage")
     @ResponseBody
-    public void addMessage(@RequestBody MessageDTO messageDTO ) {
+    public ResponseEntity<Map<String, String>> addMessage(@RequestBody MessageDTO messageDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
-        System.out.println(messageDTO.getStudentDTO()  + " s");
         Message message = new Message();
         message.setMessage(messageDTO.getMessageDTO());
-        message.setUser(messageDTO.getStudentDTO());
+        message.setMessageTo(messageDTO.getMessageToDTO());
         message.setDate(new Date());
-        message.setTeacherName(user.getUsername());
+        message.setMessageFrom(user.getUsername());
 
         messageRepository.save(message);
 
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Message saved successfully");
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "/editMessage")
-    @ResponseBody
-    public void editMessage(@RequestBody MessageDTO messageDTO ,@RequestParam(value = "id") Long id ) {
-
-        Message message = messageRepository.findByUserId(id);
-        message.setMessage(messageDTO.getMessageDTO());
-        message.setUser(messageDTO.getStudentDTO());
-        messageRepository.save(message);
-
-    }
+//    @PostMapping(value = "/editMessage")
+//    @ResponseBody
+//    public void editMessage(@RequestBody MessageDTO messageDTO ,@RequestParam(value = "id") Long id ) {
+//
+//        Message message = messageRepository.findByUserId(id);
+//        message.setMessage(messageDTO.getMessageDTO());
+//        message.setMessageTo(messageDTO.getMessageToDTO());
+//        messageRepository.save(message);
+//
+//    }
 
     @GetMapping(value="/createParts")
     public ModelAndView  topicPart(ModelAndView modelAndView,HttpServletRequest httpServletRequest){
@@ -229,6 +257,22 @@ public class DegreeTopicController {
         degreeTopicRespository.deleteById(degreeTopicId);
         return "success";
 
+    }
+
+
+    @GetMapping(value="notifications")
+    public ModelAndView  notifications(  ModelAndView modelAndView, HttpServletRequest httpServletRequest ){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(authenticatedUser.getUsername());
+        List <DegreeTopic> degreeTopic = degreeTopicRespository.findAll();
+
+        modelAndView.addObject("currentPath", httpServletRequest.getRequestURI());
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("degreeTopic", degreeTopic);
+
+        modelAndView.setViewName("/Student/notifications");
+        return modelAndView;
     }
 
 

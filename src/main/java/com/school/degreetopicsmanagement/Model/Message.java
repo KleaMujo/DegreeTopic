@@ -18,7 +18,7 @@ public class Message {
     private Long id;
 
     private String message;
-    private String user;
+    private String messageTo;
     private Date date;
-    private String teacherName;
+    private String messageFrom;
  }
