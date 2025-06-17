@@ -20,4 +20,5 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
     List<Message> findAllByMessageFrom(@Param("username") String username);
 
 
+
 }

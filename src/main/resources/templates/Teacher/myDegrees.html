@@ -106,6 +106,17 @@
             background-color: #f0f0f0;
         }
 
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* space between cards */
+        }
+
+        .content > div.col-lg-4 {
+            flex: 1 1 300px; /* make each col take min 300px and grow */
+            max-width: 33.33%; /* to behave like col-lg-4 on large screens */
+            box-sizing: border-box;
+        }
 
     </style>
 

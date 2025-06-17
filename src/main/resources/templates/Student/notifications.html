@@ -3,16 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Professor Notifications</title>
+  <title>Student Notifications</title>
   <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-
-
-
-
 
     .content-section {
       display: none;
@@ -152,32 +148,93 @@
   <div th:replace="/Student/sidebarStudent.html"></div>
 
   <!-- Main Content -->
-  <div class="content">
-    <div id="notifications" class="content-section active">
-      <h1 class="page-title">Send Message</h1>
-      <div class="form-group">
-        <label for="recipient">Select :</label>
-        <select name="recipient" id="recipient" required>
-          <option disabled selected value="">-- Select a student --</option>
-          <option th:each="degreeTopic : ${degreeTopic}"
-                  th:value="${@userService.getUsername1(degreeTopic.getTeacher())}"
-                  th:text="${degreeTopic.getTitle() + ' - ' + @userService.getUsername1(degreeTopic.getTeacher())}">
-          </option>
-        </select>
+  <!-- Display Messages -->
+  <div class="container mt-4">
+
+    <!-- Send New Notification -->
+    <div class="content">
+      <div id="notifications" class="content-section active">
+        <h1 class="page-title">Send Message</h1>
+        <div class="form-group">
+          <label for="recipient">Select :</label>
+          <select name="recipient" id="recipient" required>
+            <option disabled selected value="">-- Select a student --</option>
+            <option th:each="degreeTopic : ${degreeTopic}"
+                    th:value="${@userService.getUsername1(degreeTopic.getTeacher())}"
+                    th:text="${degreeTopic.getTitle() + ' - ' + @userService.getUsername1(degreeTopic.getTeacher())}">
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <input type="text" id="message" name="message" placeholder="Enter your message" required />
+        </div>
+        <div class="form-actions">
+          <button type="button" onclick="send()" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-2"></i>Send
+          </button>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="message">Message:</label>
-        <input type="text" id="message" name="message" placeholder="Enter your message" required />
-      </div>
-      <div class="form-actions">
-        <button type="button" onclick="send()" class="btn btn-primary">
-          <i class="fas fa-paper-plane me-2"></i>Send
-        </button>
+
+    <!-- Sender List -->
+    <!-- Message History Accordion -->
+    <div class="accordion" id="messageAccordion" th:if="${groupedMessages != null && !groupedMessages.isEmpty()}" th:with="grouped=${groupedMessages}">
+      <div th:each="entry : ${grouped}" class="accordion-item border rounded mb-3 shadow-sm">
+        <h2 class="accordion-header" th:attr="id='heading__' + ${entry.key}">
+          <button class="accordion-button collapsed" type="button"
+                  onclick="toggleAccordion(this)"
+                  th:attr="aria-controls='collapse__' + ${entry.key}">
+            <span th:text="${entry.key}">Sender Name</span>
+          </button>
+        </h2>
+        <div class="accordion-collapse" th:attr="id='collapse__' + ${entry.key}" style="display: none;">
+          <div class="accordion-body">
+
+            <!-- Messages -->
+            <div th:each="msg : ${entry.value}">
+              <div th:class="'mb-3 p-3 rounded shadow-sm ' +
+                                (${msg.getMessageFrom()} == ${#authentication.name} ?
+                                'bg-primary-subtle border-start border-4 border-primary text-end' :
+                                'bg-success-subtle border-start border-4 border-success')">
+
+                <div class="d-flex justify-content-between">
+                  <small class="text-muted" th:text="${#dates.format(msg.getDate(), 'dd MMM yyyy HH:mm')}"></small>
+                </div>
+                <div th:text="${msg.getMessage()}" class="fw-medium text-dark">Message content</div>
+              </div>
+            </div>
+
+            <!-- Reply Form -->
+            <form class="mt-3">
+              <input type="hidden" name="recipient" th:value="${entry.key}" />
+              <div class="mb-2">
+                <label class="form-label fw-semibold" th:attr="for='messageInput__' + ${entry.key}">Reply Message:</label>
+                <input type="text"
+                       th:attr="id='messageInput__' + ${entry.key}"
+                       name="message"
+                       class="form-control"
+                       placeholder="Type your reply..." required />
+              </div>
+              <div class="text-end">
+                <button type="button"
+                        class="btn btn-success"
+                        onclick="sendTo(this)">
+                  <i class="fas fa-paper-plane me-2"></i>Send
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
       </div>
     </div>
 
-
+    <!-- Optional: Empty State -->
+    <div th:if="${groupedMessages == null || groupedMessages.isEmpty()}" class="alert alert-info text-center">
+      No messages yet. Start a conversation by sending a new message above.
+    </div>
   </div>
+</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -185,12 +242,94 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+  function toggleAccordion(button) {
+    // Get the sender name from the button span text
+    const senderName = button.querySelector('span').textContent.trim();
+
+    // Build the related content id
+    const contentId = 'collapse__' + senderName;
+
+    // Find the content div
+    const contentDiv = document.getElementById(contentId);
+
+    if (!contentDiv) {
+      console.warn('No accordion content found for sender:', senderName);
+      return;
+    }
+
+    // Toggle display block/none
+    if (contentDiv.style.display === 'block') {
+      contentDiv.style.display = 'none';
+      button.classList.add('collapsed');
+      button.setAttribute('aria-expanded', 'false');
+    } else {
+      contentDiv.style.display = 'block';
+      button.classList.remove('collapsed');
+      button.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function sendTo(button) {
+
+    const form = button.closest('form');
+    const recipient = form.querySelector('input[name="recipient"]').value;
+    const messageInput = form.querySelector('input[name="message"]').value;
+
+    console.log('Sending message to:', recipient);
+    console.log('Message:', messageInput);
+
+    // Prepare message object for AJAX
+    const message = {
+      messageToDTO: recipient,
+      messageDTO: messageInput
+    };
+
+    button.disabled = true; // prevent multiple clicks
+
+    $.ajax({
+      type: "POST",
+      contentType: "application/json",
+      headers: {'x-my-custom-header': 'some value'},
+      url: "/addMessage",
+      data: JSON.stringify(message),
+      dataType: 'json',
+      cache: false,
+      timeout: 1500,
+      success: function (response) {
+        Swal.close();
+        Swal.fire({
+          title: 'Success!',
+          text: 'Message sent.',
+          icon: 'success',
+        }).then(function () {
+          button.disabled = false;
+          location.reload();
+        });
+      },
+      error: function (error) {
+        button.disabled = false;
+        Swal.fire({
+          title: 'Error!',
+          text: 'Message failed to send.',
+          icon: 'error',
+        });
+      }
+    });
+  }
+
+
+
+
+
+
+
   function send(){
     var message = {};
-
     message.messageToDTO = document.getElementById("recipient").value;
     message.messageDTO = document.getElementById("message").value;
-    console.log(message.messageDTO + " " + message.messageTo)
+
+    // Prepare message object for AJAX
+
     $.ajax({
       type: "POST",
       contentType: "application/json",
@@ -204,7 +343,7 @@
         Swal.close();
         Swal.fire({
           title: 'Success!',
-          text: response,
+          text: 'Message sent',
           icon: 'success',
         }).then(function () {
           button.disabled = false;
@@ -216,6 +355,7 @@
       }
     });
   }
+
 </script>
 
 </body>

@@ -16,4 +16,9 @@ public interface AssignmentAnswerRepository extends JpaRepository<AssignmentAnsw
     @Query("SELECT a FROM AssignmentAnswer a WHERE a.assignmentId = :assignmentId ")
     AssignmentAnswer findByAssignmendId(@Param("assignmentId") Long assignmentId);
 
+    List<AssignmentAnswer> findByAssignmentIdIn(List<Long> assignmentIds);
+
+    AssignmentAnswer findByAssignmentId(Long assignmentId);
+
 }
+

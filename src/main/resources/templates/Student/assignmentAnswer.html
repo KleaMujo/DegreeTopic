@@ -11,547 +11,128 @@
   <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .top-nav-buttons {
+      margin-bottom: 20px;
+    }
+
+    .top-nav-buttons button {
+      margin-right: 10px;
+    }
+
+    .form-group, .form-actions {
+      margin: 15px 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
     :root {
-      --primary-color: #1e3a8a;
-      --secondary-color: #3b82f6;
-      --accent-color: #60a5fa;
-      --background-primary: #ffffff;
-      --background-secondary: #f8fafc;
-      --background-tertiary: #f1f5f9;
-      --text-primary: #1f2937;
-      --text-secondary: #64748b;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --danger-color: #dc2626;
+      --primary-color: #5156be;
+      --secondary-color: #5156be;
+      --light-color: #f5f5f5;
+      --text-color: #333;
     }
-
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #f8fafc;
-      color: var(--text-primary);
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-    /* Assignment Card - More Formal Styling */
-    .assignment-card {
-      background: var(--background-primary);
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 2rem;
-      overflow: hidden;
-      transition: box-shadow 0.2s ease;
-    }
-
-    .assignment-card:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-
-    .card-header {
-      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-      padding: 2.5rem 2rem 2rem;
-      border-bottom: 2px solid #e5e7eb;
-      position: relative;
-    }
-
-    .card-header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    }
-
-    .header-content-flex {
       display: flex;
-      align-items: flex-start;
-      gap: 1.25rem;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: var(--light-color);
     }
+    /* Header Navbar Styles */
 
-    .assignment-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      border-radius: 8px;
+
+    .degree-icon {
+      font-size: 32px;
       color: white;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      box-shadow: var(--shadow-md);
     }
 
-    .assignment-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin: 0 0 0.75rem 0;
-      line-height: 1.2;
-      letter-spacing: -0.025em;
-    }
 
-    .assignment-meta {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
+    /* Main Content Wrapper */
+    .main-container {
       display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-weight: 500;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .meta-item i {
-      color: var(--secondary-color);
-      width: 16px;
-    }
-
-    .meta-divider {
-      width: 3px;
-      height: 3px;
-      background: var(--text-secondary);
-      border-radius: 50%;
-      opacity: 0.4;
-    }
-
-    #submissionStatusTitle {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
-      color: var(--primary-color);
-    }
-
-    /* Submission Section */
-    .submission-section {
-      padding: 2.5rem 2rem;
-      background: var(--background-primary);
-    }
-
-    .section-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 2px solid var(--background-tertiary);
-    }
-
-    .section-title i {
-      color: var(--secondary-color);
-      font-size: 1.1rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.75rem;
-    }
-
-    .form-label {
-      display: block;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 2px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-      background: var(--background-primary);
-      color: var(--text-primary);
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    textarea.form-control {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .upload-area {
-      border: 2px dashed #cbd5e1;
-      border-radius: 8px;
-      padding: 3rem 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      background: var(--background-secondary);
-      margin-bottom: 1.5rem;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .upload-area:hover {
-      border-color: var(--secondary-color);
-      background: #eff6ff;
-      transform: translateY(-1px);
-    }
-
-    .upload-area.dragover {
-      border-color: var(--secondary-color);
-      background: #eff6ff;
-      border-style: solid;
-    }
-
-    .upload-icon {
-      font-size: 2.5rem;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
-      transition: color 0.3s ease;
-    }
-
-    .upload-area:hover .upload-icon {
-      color: var(--secondary-color);
-    }
-
-    .upload-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .upload-description {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    .file-info {
-      background: #f0f9ff;
-      border: 2px solid #bae6fd;
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      display: none;
-    }
-
-    .file-info.show {
-      display: block;
-    }
-
-    .file-details {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .file-type-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--secondary-color);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-
-    .file-meta {
       flex: 1;
     }
+    /* Sidebar Styles */
 
-    .file-name {
+    .page-title {
+      margin-bottom: 20px;
+      color: var(--primary-color);
+    }
+    .content-section {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .content-section p {
+      line-height: 1.6;
+      color: #333;
+    }
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
       font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.25rem;
-      font-size: 0.95rem;
+      color: var(--primary-color);
     }
-
-    .file-size {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 500;
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
     }
-
-    .remove-file {
-      background: none;
-      border: none;
-      color: var(--danger-color);
-      cursor: pointer;
-      padding: 0.75rem;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-      font-size: 1.1rem;
-    }
-
-    .remove-file:hover {
-      background: #fef2f2;
-      transform: scale(1.1);
-    }
-
-    /* Professional Buttons */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.875rem 1.75rem;
-      border: 2px solid transparent;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      min-width: 140px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-weight: 600;
+      transition: background-color 0.3s;
     }
-
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background-color: var(--secondary-color);
       color: white;
-      box-shadow: var(--shadow-md);
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    }
-
     .btn-secondary {
-      background: var(--background-primary);
-      color: var(--text-secondary);
-      border-color: var(--border-color);
+      background-color: #95a5a6;
+      color: white;
+      margin-left: 10px;
     }
-
-    .btn-secondary:hover {
-      background: var(--background-secondary);
-      color: var(--text-primary);
-      border-color: var(--text-secondary);
+    .btn:hover {
+      opacity: 0.9;
     }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      justify-content: flex-end;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-color);
-    }
-
-    /* Status Messages */
-    .status-message {
-      padding: 1rem 1.25rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      display: none;
-      font-weight: 500;
-      border: 2px solid;
-    }
-
-    .status-message.show {
-      display: block;
-    }
-
-    .status-success {
-      background: #f0fdf4;
-      border-color: #22c55e;
-      color: #166534;
-    }
-
-    .status-error {
-      background: #fef2f2;
-      border-color: #ef4444;
-      color: #dc2626;
-    }
-
-    /* Header Styling */
-    .header {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      box-shadow: var(--shadow-lg);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .navbar {
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .user-dropdown {
-      position: relative;
-    }
-
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
+    /* Navigation styles */
+    .nav-link {
+      color: white;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
     }
-
-    .user-avatar:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 100%;
-      background: white;
-      box-shadow: var(--shadow-lg);
-      border-radius: 8px;
-      overflow: hidden;
-      min-width: 180px;
-      margin-top: 0.5rem;
-    }
-
-    .dropdown-content a {
-      display: block;
-      padding: 0.75rem 1rem;
-      color: var(--text-primary);
-      text-decoration: none;
-      transition: background-color 0.2s ease;
-      font-weight: 500;
-    }
-
-    .dropdown-content a:hover {
-      background: var(--background-secondary);
-    }
-
-    .user-dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .main-content {
-      display: flex;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .container {
-        margin: 1rem auto;
-        padding: 0 0.5rem;
-      }
-
-      .assignment-card {
-        margin: 0 0 1rem;
-      }
-
-      .card-header,
-      .submission-section {
-        padding: 1.5rem 1rem;
-      }
-
-      .header-content-flex {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-      }
-
-      .assignment-title {
-        font-size: 1.5rem;
-      }
-
-      .upload-area {
-        padding: 2rem 1rem;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      .btn {
-        justify-content: center;
-      }
-
-      .assignment-meta {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-start;
-      }
-
-      .meta-divider {
-        display: none;
-      }
-    }
-
-    /* Loading States */
-    .loading {
-      position: relative;
-      pointer-events: none;
-    }
-
-    .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 18px;
-      height: 18px;
-      margin: -9px 0 0 -9px;
-      border: 2px solid transparent;
-      border-top: 2px solid currentColor;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .me-2 {
+      margin-right: 8px;
     }
   </style>
 </head>
 <body>
 <header class="header">
+
   <div class="navbar">
     <div class="user-dropdown">
       <div class="user-avatar">A</div>
@@ -563,7 +144,8 @@
     </div>
   </div>
 </header>
-<div class="main-content">
+<!-- Main Content Container -->
+<div class="main-container">
   <div th:replace="/Student/sidebarStudent.html"></div>
 
   <div class="container">

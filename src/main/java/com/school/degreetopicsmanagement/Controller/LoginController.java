@@ -45,7 +45,7 @@ public class LoginController {
     public String login(HttpServletResponse response, Authentication authentication) throws IOException {
 
         if (authentication != null) {
-            response.sendRedirect("/");
+            return "redirect:/Teacher/dashboard";
         }
          return "login";
     }
