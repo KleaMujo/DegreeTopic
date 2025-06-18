@@ -325,6 +325,7 @@ public class DegreeTopicController {
     }
 
 
+
     @PostMapping(value = "/deleteDegreeTopic")
     public String  deleteDegreeTopic(@RequestParam(value = "id") Long degreeTopicId) {
         System.out.println(" DegreeTopic me id " + degreeTopicId + " u fshi ");

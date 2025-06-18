@@ -268,11 +268,69 @@
 
     <!-- Content -->
     <div class="content">
+        <div class="page-description mb-4">
+            <div class="d-flex align-items-start mb-3">
+                <div class="flex-shrink-0">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle"
+                         style="width: 40px; height: 40px; background-color: rgba(78, 115, 223, 0.1);">
+                        <i class="fas fa-tasks text-primary"></i>
+                    </div>
+                </div>
+                <div class="ms-3">
+                    <p class="mb-0 text-muted">
+                        View assignments that have been assigned to you by the professor, listed in the order they were sent.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-start mb-3">
+                <div class="flex-shrink-0">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle"
+                         style="width: 40px; height: 40px; background-color: rgba(40, 167, 69, 0.1);">
+                        <i class="fas fa-link text-success"></i>
+                    </div>
+                </div>
+                <div class="ms-3">
+                    <p class="mb-0 text-muted">
+                        Click on any link included in an assignment to open it directly.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-start mb-3">
+                <div class="flex-shrink-0">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle"
+                         style="width: 40px; height: 40px; background-color: rgba(255, 193, 7, 0.1);">
+                        <i class="fas fa-file-download text-warning"></i>
+                    </div>
+                </div>
+                <div class="ms-3">
+                    <p class="mb-0 text-muted">
+                        Photos, PDFs, and other files can be opened in a new tab or downloaded to your device.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle"
+                         style="width: 40px; height: 40px; background-color: rgba(220, 53, 69, 0.1);">
+                        <i class="fas fa-reply text-danger"></i>
+                    </div>
+                </div>
+                <div class="ms-3">
+                    <p class="mb-0 text-muted">
+                        Clicking on an assignment allows you to submit your answer directly.
+                    </p>
+                </div>
+            </div>
+        </div>
 
 
 
 
-<div class="container assignments-container">
+
+        <div class="container assignments-container">
     <div th:if="${assignments.isEmpty()}" class="no-assignments">
         <i class="fas fa-clipboard-list no-assignments-icon"></i>
         <h3 class="no-assignments-title">No Assignments Available</h3>

@@ -143,15 +143,73 @@
     </div>
   </div>
 </header>
-<!-- Main Content Container -->
+
 <div class="main-container">
   <div th:replace="/Student/sidebarStudent.html"></div>
 
-  <!-- Main Content -->
-  <!-- Display Messages -->
-  <div class="container mt-4">
 
-    <!-- Send New Notification -->
+  <div class="container-fluid mt-4">
+
+    <div style="width: 100%; margin-left: 0; margin-right: 0;">
+      <div class="mb-4 px-3 py-2">
+
+
+        <div class="d-flex flex-column gap-3">
+
+          <!-- First item -->
+          <div class="d-flex align-items-start">
+            <div class="flex-shrink-0">
+              <div class="d-flex justify-content-center align-items-center rounded-circle"
+                   style="width: 40px; height: 40px; background-color: rgba(78, 115, 223, 0.1);">
+                <i class="fas fa-user-graduate text-primary"></i>
+              </div>
+            </div>
+            <div class="ms-3">
+              <h6 class="fw-semibold mb-1">Select a Teacher</h6>
+              <p class="text-muted small mb-0">
+                Send messages by selecting from a dropdown that lists teachers along with the degree topics they supervise.
+              </p>
+            </div>
+          </div>
+
+          <!-- Second item -->
+          <div class="d-flex align-items-start">
+            <div class="flex-shrink-0">
+              <div class="d-flex justify-content-center align-items-center rounded-circle"
+                   style="width: 40px; height: 40px; background-color: rgba(40, 167, 69, 0.1);">
+                <i class="fas fa-comments text-success"></i>
+              </div>
+            </div>
+            <div class="ms-3">
+              <h6 class="fw-semibold mb-1">View and Reply to Messages</h6>
+              <p class="text-muted small mb-0">
+                View a list of teachers who have messaged you; click on a teacher to see the full conversation history with timestamps and reply to continue the discussion.
+              </p>
+            </div>
+          </div>
+
+          <!-- Third item -->
+          <div class="d-flex align-items-start">
+            <div class="flex-shrink-0">
+              <div class="d-flex justify-content-center align-items-center rounded-circle"
+                   style="width: 40px; height: 40px; background-color: rgba(255, 193, 7, 0.1);">
+                <i class="fas fa-file-upload text-warning"></i>
+              </div>
+            </div>
+            <div class="ms-3">
+              <h6 class="fw-semibold mb-1">Share Files via Assignments</h6>
+              <p class="text-muted small mb-0">
+                To share files such as links, PDFs, or images, use the assignment feature for that topic.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
     <div class="content">
       <div id="notifications" class="content-section active">
         <h1 class="page-title">Send Message</h1>
