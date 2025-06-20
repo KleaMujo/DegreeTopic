@@ -80,15 +80,30 @@ public class AssignmentController {
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
+        // Base directory
+        Path baseUploadPath = Paths.get("/home/data/DegreeTopic/");
+
+        // Clean and sanitize the degree topic to use as folder name
+        String degreeTopicFolderName = assignmentDto.getDegreeTopic();
+
+
+        // Create the full upload path with degree topic folder
+        Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
+
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        Path uploadPath = Paths.get("/home/data/DegreeTopic/");
 
         try {
+            // Create directories if they don't exist
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
+
+            // Resolve the target file path
             Path filePath = uploadPath.resolve(fileName);
+
+            // Save the file
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("File upload failed: " + e.getMessage());
@@ -100,10 +115,11 @@ public class AssignmentController {
 
         assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
         assignment.setAssignmentDescription(assignmentDto.getAssignmentDescription());
-        assignment.setFileName(fileName); // Save just the file name
+        assignment.setFileName(fileName);
         assignment.setDate(new Date());
         assignment.setLinkUrl(assignmentDto.getLinkUrl());
         assignment.setLinkText(assignmentDto.getLinkText());
+        assignment.setDegreeTopic(assignmentDto.getDegreeTopic());
 
         assignmentRepository.save(assignment);
 
@@ -177,14 +193,27 @@ public class AssignmentController {
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
         List<Assignment> assignments = assignmentRepository.findAllByStudentIdOrderByDateDesc(user.getId());
+        Map<Long, String> assignmentStatuses = new HashMap<>(); // key = assignmentId, value = "On time" / "Late"
+
+        for (Assignment assignment : assignments) {
+            List<AssignmentAnswer> answers = assignmentAnswerRepository.findAllByAssignmentId(assignment.getId());
+            if (!answers.isEmpty()) {
+                AssignmentAnswer answer = answers.get(0); // assuming one answer per assignment
+                String status = answer.getDate().before(assignment.getDate()) || answer.getDate().equals(assignment.getDate())
+                        ? "Answered on time" : "Answered late";
+                assignmentStatuses.put(assignment.getId(), status);
+            } else {
+                assignmentStatuses.put(assignment.getId(), "Not answered");
+            }
+        }
+
         modelAndView.addObject("assignments", assignments);
-
-
+        modelAndView.addObject("assignmentStatuses", assignmentStatuses);
         modelAndView.addObject("studentId", user.getId());
-
         modelAndView.setViewName("Student/viewAssignments");
         return modelAndView;
     }
+
 
     @GetMapping(value = "/assignmentAnswer")
     public ModelAndView assignmentAnswer( @RequestParam(value="assignmentId")Long id, HttpServletRequest httpServletRequest, ModelAndView modelAndView) {
@@ -217,22 +246,48 @@ public class AssignmentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUsername(authenticatedUser.getUsername());
-        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new RuntimeException("Assignment not found"));
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new RuntimeException("Assignment not found"));
         System.out.println("Assignment id " + assignmentId);
+
+        Path baseUploadPath = Paths.get("/home/data/DegreeTopic/");
+
+        // Clean and sanitize the degree topic to use as folder name
+        String degreeTopicFolderName = assignment.getDegreeTopic();
+
+
+        // Create the full upload path with degree topic folder
+        Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
+
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        if (file != null && !file.isEmpty()) {
-            Path uploadPath = Paths.get("/home/data/DegreeTopic/");
-            try {
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("File upload failed: " + e.getMessage());
+
+        try {
+            // Create directories if they don't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
+
+            // Resolve the target file path
+            Path filePath = uploadPath.resolve(fileName);
+
+            // Save the file
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("File upload failed: " + e.getMessage());
+        }
+
+        Date dueDateItWas = assignment.getDate();
+        Date today = new Date();
+        String status;
+        if (dueDateItWas.before(today)) {
+            status = "Answered late";
+        } else if (dueDateItWas.after(today)) {
+            status = "Answered on time";
+        } else {
+            status = "Pending Submission";
         }
 
         AssignmentAnswer assignmentAnswer = new AssignmentAnswer();
@@ -242,13 +297,13 @@ public class AssignmentController {
         assignmentAnswer.setStudentId(user.getId());
         assignmentAnswer.setAssignmentId(assignment.getId());
         assignmentAnswer.setFileName(fileName);
-
+        assignmentAnswer.setStatus(status);
 
         assignmentAnswerRepository.save(assignmentAnswer);
 
-
         return ResponseEntity.ok("Assignment edited and file saved successfully.");
     }
+
 
 
 
@@ -257,6 +312,9 @@ public class AssignmentController {
 
         AssignmentAnswer assignmentAnswer = assignmentAnswerRepository.findById(id).get();
         modelAndView.addObject("assignmentAnswer", assignmentAnswer);
+
+        Assignment assignment = assignmentRepository.findById(assignmentAnswer.getAssignmentId()).get();
+        modelAndView.addObject("assignment", assignment);
 
         modelAndView.setViewName("Student/assignmentAnswers1");
         return modelAndView;

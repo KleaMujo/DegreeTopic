@@ -116,6 +116,9 @@
             color: #718096;
             font-size: 16px;
         }
+        .card-header{
+            background-color: #e9e9ef;
+        }
     </style>
 
 <body>
@@ -241,9 +244,15 @@
     function createAssignment() {
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0]; // Will be undefined if no file selected
+        const select = document.getElementById('recipient');
+
+        const selectedValue = select.value; // get current selected id
+        const selectedText = select.options[select.selectedIndex]?.text || '';
+        const nameValue = selectedText.split(' - ')[1] || ''; // get the part after ' - '
 
         const assignmentDto = {
-            studentId: document.getElementById("recipient").value,
+            studentId: selectedValue,
+            degreeTopic :nameValue,
             dueDate: document.getElementById("dueDate").value,
             assignmentTitle: document.getElementById("assignmentTitle").value,
             assignmentDescription: document.getElementById("assignmentDescription").value,
@@ -293,7 +302,6 @@
         });
     }
 
-
     function addLink() {
         const linkText = document.getElementById("linkText").value;
         const linkUrl = document.getElementById("linkUrl").value;
@@ -310,14 +318,10 @@
 
 </script>
 
-
-
-
-
 <script>
     // Initialize the editor
     ClassicEditor
-        .create(document.querySelector('#popUp'), {
+        .create(document.querySelector('#assignmentDescription'), {
             toolbar: {
                 items: [
                     'heading',
@@ -339,12 +343,13 @@
 
             // Sync CKEditor with the textarea
             editor.model.document.on('change:data', () => {
-                document.querySelector('#popUp').value = editor.getData();
+                document.querySelector('#assignmentDescription').value = editor.getData();
             });
         })
         .catch(error => {
             console.error(error);
         });
+
 
     // File upload handling
     document.getElementById('fileUploadArea').addEventListener('click', function() {

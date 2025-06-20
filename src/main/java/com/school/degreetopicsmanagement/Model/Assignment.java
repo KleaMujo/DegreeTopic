@@ -44,4 +44,18 @@ public class Assignment {
     @Column(name="link_url")
     private String linkUrl;
 
+    @Column(name="degreeTopic")
+    private String degreeTopic;
+
+    public String getPropertyPicturesPath(){
+        return "/attachments/" + getDegreeTopic() + "/" + this.fileName;
+    }
+
+
+
+
+//    @ManyToOne
+//    @JoinColumn(name="degree_topic_id")
+//    private DegreeTopic degreeTopic;
+
 }

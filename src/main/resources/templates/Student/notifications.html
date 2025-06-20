@@ -126,6 +126,33 @@
     .me-2 {
       margin-right: 8px;
     }
+
+
+
+    .formal-button {
+      background-color: #f8f9fa; /* light gray */
+      border: 1px solid #ccc;
+      padding: 10px 16px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .formal-button:hover,
+    .formal-button:focus {
+      background-color: #e2e6ea;
+      border-color: #999;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      text-decoration: none;
+      outline: none;
+    }
+
+
   </style>
 </head>
 <body>
@@ -210,10 +237,15 @@
 
 
 
-    <div class="content">
-      <div id="notifications" class="content-section active">
-        <h1 class="page-title">Send Message</h1>
-        <div class="form-group">
+
+<div style=" margin-left: 28px;">
+
+      <div id="notifications" class="card mb-5 shadow-sm">
+        <div class="card-header  text-white fw-semibold" style="background-color: #e9e9ef">
+          <label style="color:black;font-size: 15px">  Send a New Message</label>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
           <label for="recipient">Select :</label>
           <select name="recipient" id="recipient" required>
             <option disabled selected value="">-- Select a student --</option>
@@ -223,15 +255,16 @@
             </option>
           </select>
         </div>
-        <div class="form-group">
+          <div class="mb-3">
           <label for="message">Message:</label>
           <input type="text" id="message" name="message" placeholder="Enter your message" required />
         </div>
-        <div class="form-actions">
+          <div class="text-end">
           <button type="button" onclick="send()" class="btn btn-primary">
             <i class="fas fa-paper-plane me-2"></i>Send
           </button>
         </div>
+      </div>
       </div>
 
     <!-- Sender List -->
@@ -239,7 +272,7 @@
     <div class="accordion" id="messageAccordion" th:if="${groupedMessages != null && !groupedMessages.isEmpty()}" th:with="grouped=${groupedMessages}">
       <div th:each="entry : ${grouped}" class="accordion-item border rounded mb-3 shadow-sm">
         <h2 class="accordion-header" th:attr="id='heading__' + ${entry.key}">
-          <button class="accordion-button collapsed" type="button"
+          <button class="accordion-button formal-button" type="button"
                   onclick="toggleAccordion(this)"
                   th:attr="aria-controls='collapse__' + ${entry.key}">
             <span th:text="${entry.key}">Sender Name</span>
@@ -291,9 +324,9 @@
     <div th:if="${groupedMessages == null || groupedMessages.isEmpty()}" class="alert alert-info text-center">
       No messages yet. Start a conversation by sending a new message above.
     </div>
+      </div>
   </div>
-</div>
-</div>
+  </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 

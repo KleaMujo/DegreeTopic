@@ -126,6 +126,30 @@
         .me-2 {
             margin-right: 8px;
         }
+
+        .formal-button {
+            background-color: #f8f9fa; /* light gray */
+            border: 1px solid #ccc;
+            padding: 10px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .formal-button:hover,
+        .formal-button:focus {
+            background-color: #e2e6ea;
+            border-color: #999;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            text-decoration: none;
+            outline: none;
+        }
+
     </style>
 </head>
 <body>
@@ -197,8 +221,8 @@
 
         <!-- Send New Notification -->
         <div class="card mb-5 shadow-sm">
-            <div class="card-header bg-primary text-white fw-semibold">
-                Send a New Message
+            <div class="card-header  text-white fw-semibold" style="background-color: #e9e9ef">
+              <label style="color:black;font-size: 15px">  Send a New Message</label>
             </div>
             <div class="card-body">
                 <div class="mb-3">
@@ -228,7 +252,7 @@
         <div class="accordion" id="messageAccordion" th:if="${groupedMessages != null && !groupedMessages.isEmpty()}" th:with="grouped=${groupedMessages}">
             <div th:each="entry : ${grouped}" class="accordion-item border rounded mb-3 shadow-sm">
                 <h2 class="accordion-header" th:attr="id='heading__' + ${entry.key}">
-                    <button class="accordion-button collapsed" type="button"
+                    <button class="accordion-button formal-button" type="button"
                             onclick="toggleAccordion(this)"
                             th:attr="aria-controls='collapse__' + ${entry.key}">
                         <span th:text="${entry.key}">Sender Name</span>

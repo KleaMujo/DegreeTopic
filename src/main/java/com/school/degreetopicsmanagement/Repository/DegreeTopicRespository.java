@@ -23,6 +23,7 @@ public interface DegreeTopicRespository extends JpaRepository<DegreeTopic, Long>
     @Query("SELECT dt.title, COUNT(dt.student) FROM DegreeTopic dt WHERE dt.teacher.id = :teacherId GROUP BY dt.title")
     Map<String, Long> countStudentsPerTopic(@Param("teacherId") Long teacherId);
 
-    List<DegreeTopic> findByTeacher(User teacher);
+    List<DegreeTopic> findAllByTeacher(User teacher);
 
+    DegreeTopic findByTeacher(User teacher);
 }

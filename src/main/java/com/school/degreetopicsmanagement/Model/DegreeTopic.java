@@ -43,5 +43,7 @@ public class DegreeTopic {
     @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
     private List<DegreeTopicRequest> degreeTopicRequests;
 
+//    @OneToMany(mappedBy = "degreeTopic", cascade = CascadeType.ALL)
+//    private List<Assignment> assignment;
 
 }

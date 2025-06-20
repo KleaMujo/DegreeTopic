@@ -22,6 +22,6 @@ public class AssignmentDto {
         private Date date;
         private String linkText;
         private String linkUrl;
-
+        private String degreeTopic;
 
 }

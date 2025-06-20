@@ -128,6 +128,188 @@
     .me-2 {
       margin-right: 8px;
     }
+    .card-header{
+      background-color: #e9e9ef;
+    }
+  </style>
+  <style>
+    .file-upload-area {
+      border: 2px dashed #c0c4cc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      background-color: #f9f9fb;
+      transition: border-color 0.3s;
+      cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+      border-color: #4a7dff;
+    }
+
+    .upload-icon {
+      font-size: 36px;
+      color: #4a7dff;
+      margin-bottom: 10px;
+    }
+
+    .upload-instruction {
+      margin: 0;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .browse-link {
+      color: #4a7dff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .btn-outline-primary {
+      margin-top: 12px;
+      border: 1px solid #4a7dff;
+      background-color: transparent;
+      color: #4a7dff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #4a7dff;
+      color: #fff;
+    }
+    .add-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid #dde2e7;
+      border-radius: 6px;
+      color: #4a5568;
+      background-color: #fff;
+      font-size: 14px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+    .add-link-btn i {
+      margin-right: 6px;
+      color: #4a7dff;
+    }
+
+  </style>
+  <style>
+    .form-label {
+      font-weight: 500;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+    .form-select, .form-control {
+      border-radius: 6px;
+      border: 1px solid #dde2e7;
+      padding: 10px 14px;
+      font-size: 15px;
+    }
+    .form-select:focus, .form-control:focus {
+      border-color: #4a7dff;
+      box-shadow: 0 0 0 3px rgba(74, 125, 255, 0.15);
+    }
+    .btn-primary {
+      background-color: #3e64ff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-weight: 600;
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-primary:hover {
+      background-color: #2c4ccc;
+      transform: translateY(-1px);
+    }
+    .btn-outline-secondary {
+      border-color: #dde2e7;
+      color: #4a5568;
+      border-radius: 6px;
+      padding: 10px 16px;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+    .btn-outline-secondary:hover {
+      background-color: #f8f9fa;
+      color: #2d3748;
+    }
+    .section-title {
+      font-size: 22px;
+      color: #2d3748;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .file-upload {
+      border: 2px dashed #dde2e7;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .file-upload:hover {
+      border-color: #4a7dff;
+      background-color: rgba(74, 125, 255, 0.03);
+    }
+    .file-upload i {
+      font-size: 28px;
+      color: #4a7dff;
+      margin-bottom: 8px;
+    }
+    .link-btn {
+      color: #4a7dff;
+      background: none;
+      border: none;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .link-btn i {
+      margin-right: 6px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .add-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid #dde2e7;
+      border-radius: 6px;
+      color: #4a5568;
+      background-color: #fff;
+      font-size: 14px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+    .add-link-btn i {
+      margin-right: 6px;
+      color: #4a7dff;
+    }
+    .header-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header-logo h1 {
+      color: #2d3748;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .header-logo p {
+      color: #718096;
+      font-size: 16px;
+    }
+    .card-header{
+      background-color: #e9e9ef;
+    }
   </style>
 </head>
 <body>
@@ -145,127 +327,218 @@
   </div>
 </header>
 <!-- Main Content Container -->
-<div class="main-container">
-  <div th:replace="/Student/sidebarStudent.html"></div>
+<div class="main-container" style="display: flex">
+  <div th:replace="/Student/sidebarStudent"></div>
 
-  <div class="container">
-    <!-- Assignment Details Card -->
-    <div class="assignment-card">
+  <div class="content">
+
+
+    <div class="card">
       <div class="card-header">
-        <div class="header-content-flex">
-          <div class="assignment-icon">
-            <i class="fas fa-file-alt"></i>
-          </div>
-          <div>
-            <div>
-              <h2 class="assignment-title" th:text="${assignment.getAssignmentTitle()}">Advanced Data Structures and Algorithms</h2>
-              <div class="assignment-meta">
-                <div class="meta-item">
-                  <i class="fas fa-calendar-alt"></i>
-                  <span th:text="${#dates.format(assignment.date, 'EEEE, MMMM dd, yyyy')}">Monday, January 15, 2024</span>
-                </div>
-                <div class="meta-divider"></div>
-                <div class="meta-item">
-                  <i class="fas fa-clock"></i>
-                  <span>Due 11:59 PM</span>
-                </div>
-                <div class="meta-divider"></div>
-              </div>
-            </div>
-            <h3 id="submissionStatusTitle"></h3>
-          </div>
-        </div>
+        Assignment Content
+      </div>
+      <div id="statusMessage" class="status-message alert d-none">
+        <div id="statusContent"></div>
       </div>
 
-      <!-- Submission Section -->
-      <div class="submission-section">
-        <h3 class="section-title">
-          <i class="fas fa-upload"></i>
-          Assignment Submission
-        </h3>
-
-        <!-- Status Messages -->
-        <div id="statusMessage" class="status-message">
-          <div id="statusContent"></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label  class="form-label">Assignment Title</label>
+          <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle">
         </div>
 
         <div class="form-group">
-          <label class="form-label">Assignment Title</label>
-          <input id="assignmentTitle" class="form-control">
+          <label  class="form-label">Assignment Instructions</label>
+          <textarea id="assignmentDescription" class="form-control"></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Assignment Instructions</label>
-          <textarea id="assignmentDescription" class="form-control" placeholder="Enter detailed assignment instructions or description..."></textarea>
-        </div>
-
-        <!-- Upload Area -->
-        <div style="margin-top: 10px" class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-          <div class="upload-icon">
+          <label class="form-label">Attachments</label>
+          <div class="file-upload" id="fileUploadArea">
             <i class="fas fa-cloud-upload-alt"></i>
-          </div>
-          <div class="upload-title">Select or drag your assignment file</div>
-          <div class="upload-description">
-            Supported formats: PDF, DOC, DOCX, TXT (Maximum size: 25MB)
-          </div>
-          <input type="file" id="fileInput" class="file-input" name="file"
-                 accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
-                 onchange="handleFileSelect(event)">
-        </div>
-
-        <!--from our db -->
-        <div id="fileInfo" class="file-info" th:each="a : ${Answerassignmemts}">
-          <div class="file-details">
-            <div id="fileTypeIcon" class="file-type-icon"> </div>
-            <div class="file-meta">
-              <div id="fileName" class="file-name" th:text="${a.getFileName()}"></div>
-            </div>
-            <button type="button" class="remove-file" onclick="removeFile()">
-              <i class="fas fa-times"></i>
-            </button>
+            <p>Drag and drop files here or <span style="color: #4a7dff; text-decoration: underline;">browse</span></p>
+            <input type="file" name="file" id="fileInput" style="display: none;">
           </div>
         </div>
+        <input type="hidden" id="hiddenLinkText">
+        <input type="hidden" id="hiddenLinkUrl">
 
-        <!-- File Information that fills from the js from what we choose -->
-        <div id="fileInfo" class="file-info">
-          <div class="file-details">
-            <div id="fileTypeIcon" class="file-type-icon">PDF</div>
-            <div class="file-meta">
-              <div id="fileName" class="file-name"></div>
-              <div id="fileSize" class="file-size"></div>
-            </div>
-            <button type="button" class="remove-file" onclick="removeFile()">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
+        <button type="button" class="add-link-btn" id="addLinkBtn">
+          <i class="fas fa-link"></i> Add Resource Link
+        </button>
 
-        <!-- Action Buttons -->
-        <div class="button-group">
-          <button type="button" class="btn btn-secondary" onclick="clearSubmission()">
-            <i class="fas fa-undo"></i>
-            Clear
+        <div class="text-end mt-4">
+          <button type="button" class="btn btn-outline-secondary me-2">Cancel</button>
+          <button type="button" class="btn btn-primary" id="submitAssignmentBtn" onclick="createAssignment()">
+            <i class="fas fa-paper-plane"></i> Submit Assignment
           </button>
-          <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitAssignment()" disabled>
-            <i class="fas fa-paper-plane"></i>
-            Submit Assignment
-          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for adding links -->
+  <div class="modal fade" id="linkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Resource Link</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="linkText" class="form-label">Display Text</label>
+            <input type="text" class="form-control" id="linkText" placeholder="Enter link text">
+          </div>
+          <div class="form-group">
+            <label for="linkUrl" class="form-label">URL</label>
+            <input type="url" class="form-control" id="linkUrl" placeholder="https://example.com">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveLinkBtn" onclick="addLink()">Add Link</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<input type="hidden" th:value="${assignment.getId()}" id="assignmentId">
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-<script>
-  function submitAssignment() {
-    if (!selectedFile) {
-      showStatus('Please select a file to submit', 'error');
-      return;
-    }
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    const submitBtn = document.getElementById('submitBtn');
+<script>
+
+  // function createAssignment() {
+  //   const fileInput = document.getElementById('fileInput');
+  //   const file = fileInput.files[0]; // Will be undefined if no file selected
+  //
+  //   const assignmentDto = {
+  //     studentId: document.getElementById("recipient").value,
+  //     dueDate: document.getElementById("dueDate").value,
+  //     assignmentTitle: document.getElementById("assignmentTitle").value,
+  //     assignmentDescription: document.getElementById("assignmentDescription").value,
+  //     linkUrl: document.getElementById("hiddenLinkUrl").value,
+  //     linkText: document.getElementById("hiddenLinkText").value,
+  //     fileName: file ? file.name : null
+  //   };
+  //
+  //   console.log("Student ID:", assignmentDto.studentId);
+  //   console.log("Due Date:", assignmentDto.dueDate);
+  //   console.log("Title:", assignmentDto.assignmentTitle);
+  //   console.log("Description:", assignmentDto.assignmentDescription);
+  //   console.log("Link URL:", assignmentDto.linkUrl);
+  //   console.log("Link Text:", assignmentDto.linkText);
+  //   console.log("File Name:", assignmentDto.fileName);
+  //
+  //   const formData = new FormData();
+  //   formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {
+  //     type: "application/json"
+  //   }));
+  //
+  //   if (file) {
+  //     formData.append("file", file);
+  //   }
+  //
+  //   $.ajax({
+  //     type: "POST",
+  //     url: "/createAssignment",
+  //     data: formData,
+  //     processData: false,
+  //     contentType: false,
+  //     success: function (response) {
+  //       console.log("Assignment created successfully");
+  //       Swal.close();
+  //       Swal.fire({
+  //         title: 'Success!',
+  //         text: response,
+  //         icon: 'success',
+  //       }).then(function () {
+  //         button.disabled = false;
+  //         location.reload();
+  //       });
+  //     },
+  //     error: function (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   });
+  // }
+
+  function addLink() {
+    const linkText = document.getElementById("linkText").value;
+    const linkUrl = document.getElementById("linkUrl").value;
+
+
+    document.getElementById("hiddenLinkText").value = linkText;
+    document.getElementById("hiddenLinkUrl").value = linkUrl;
+
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("linkModal"));
+    modal.hide();
+  }
+
+
+</script>
+
+<script>
+  // Initialize the editor
+  ClassicEditor
+          .create(document.querySelector('#assignmentDescription'), {
+            toolbar: {
+              items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'link',
+                '|',
+                'bulletedList',
+                'numberedList',
+                '|',
+                'undo',
+                'redo'
+              ]
+            }
+          })
+          .then(editor => {
+            console.log('Editor initialized successfully');
+
+            // Sync CKEditor with the textarea
+            editor.model.document.on('change:data', () => {
+              document.querySelector('#assignmentDescription').value = editor.getData();
+            });
+          })
+          .catch(error => {
+            console.error(error);
+          });
+
+
+  // File upload handling
+  document.getElementById('fileUploadArea').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
+  });
+
+  document.getElementById('fileInput').addEventListener('change', function() {
+    if (this.files.length > 0) {
+      const fileName = this.files[0].name;
+      document.querySelector('.file-upload p').textContent = `Selected file: ${fileName}`;
+    }
+  });
+
+  // Link button handling
+  document.getElementById('addLinkBtn').addEventListener('click', function() {
+    const linkModal = new bootstrap.Modal(document.getElementById('linkModal'));
+    linkModal.show();
+  });
+</script>
+<input type="hidden" th:value="${assignment.getId()}" id="assignmentId">
+
+<script>
+  function createAssignment () {
+    const submitBtn = document.getElementById('submitAssignmentBtn');
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
@@ -276,7 +549,9 @@
     const assignmentDto = {
       assignmentDescription: document.getElementById("assignmentDescription").value,
       assignmentTitle: document.getElementById("assignmentTitle").value,
-      fileName: file ? file.name : null
+      fileName: file ? file.name : null,
+      linkText: document.getElementById("hiddenLinkText").value,
+      linkUrl: document.getElementById("hiddenLinkUrl").value
     };
 
     const formData = new FormData();
@@ -296,9 +571,6 @@
       processData: false,
       contentType: false,
       success: function (response) {
-        console.log("Assignment created successfully");
-
-        // Expecting server to return response.status = "Late" or "In Time"
         const status = response.status;
         const title = status === "Late"
                 ? "❌ Assignment Submitted (Late)"
@@ -307,18 +579,19 @@
         const statusElement = document.getElementById("submissionStatusTitle");
         if (statusElement) {
           statusElement.textContent = title;
-          statusElement.style.fontSize = "0.9rem"; // You can change to "12px", "small", etc.
+          statusElement.style.fontSize = "0.9rem";
         }
 
         showStatus('Assignment submitted successfully!', 'success');
-
         submitBtn.classList.remove('loading');
         submitBtn.innerHTML = '<i class="fas fa-check"></i> Submitted';
 
         setTimeout(() => {
-          clearSubmission();
+          submitBtn.disabled = false;
           submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Assignment';
         }, 3000);
+        window.location="/viewAssignments"
+
       },
       error: function (error) {
         console.error("Error:", error);
@@ -330,117 +603,17 @@
     });
   }
 
-  let selectedFile = null;
-
-  function validateFile(file) {
-    const maxSize = 25 * 1024 * 1024; // 25MB
-    const allowedTypes = [
-      'application/pdf',
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/gif'
-    ];
-    if (file.size > maxSize) {
-      showStatus('File size exceeds 25MB limit', 'error');
-      return false;
-    }
-
-    if (!allowedTypes.includes(file.type)) {
-      showStatus('Unsupported file format. Only PDF and image files (JPG, PNG, GIF) are allowed.', 'error');
-      return false;
-    }
-
-    return true;
-  }
-
-  // Display file information
-  function displayFileInfo(file) {
-    const fileInfo = document.getElementById('fileInfo');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const fileTypeIcon = document.getElementById('fileTypeIcon');
-
-    fileName.textContent = file.name;
-    fileSize.textContent = formatFileSize(file.size);
-
-    // Set file type icon/label
-    const extension = file.name.split('.').pop().toUpperCase();
-    fileTypeIcon.textContent = extension;
-
-    fileInfo.classList.add('show');
-  }
-
-  // Format file size
-  function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  // Remove selected file
-  function removeFile() {
-    selectedFile = null;
-    document.getElementById('fileInput').value = '';
-    document.getElementById('fileInfo').classList.remove('show');
-    document.getElementById('submitBtn').disabled = true;
-    hideStatus();
-  }
-
-  // Clear submission
-  function clearSubmission() {
-    removeFile();
-    hideStatus();
-  }
-
-  function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (file) {
-      if (validateFile(file)) {
-        selectedFile = file;
-        displayFileInfo(file);
-
-        document.getElementById('submitBtn').disabled = false;
-      }
-    }
-  }
-
-  // Show status message
   function showStatus(message, type) {
     const statusMessage = document.getElementById('statusMessage');
     const statusContent = document.getElementById('statusContent');
 
-    statusContent.textContent = message;
-    statusMessage.className = `status-message status-${type} show`;
+    if (statusContent && statusMessage) {
+      statusContent.textContent = message;
+      statusMessage.className = `status-message status-${type} show`;
+    }
   }
 
-  // Hide status message
-  function hideStatus() {
-    const statusMessage = document.getElementById('statusMessage');
-    statusMessage.classList.remove('show');
-  }
 
-  // Drag and drop functionality
-  const uploadArea = document.getElementById('uploadArea');
-
-  uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-  });
-
-  uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('dragover');
-  });
-
-  uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-
-    const files = e.dataTransfer.files;
-  });
 </script>
-
 </body>
 </html>

@@ -37,4 +37,8 @@ public class AssignmentAnswer {
     @Column(name="assignment_id")
     private Long assignmentId;
 
+    @Column(name = "status")
+    private String status;
+
+
 }

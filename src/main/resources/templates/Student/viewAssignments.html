@@ -258,6 +258,43 @@
         .sidebar{
             margin-top: 0px!important;
          }
+        .status-display {
+            margin: 12px 0;
+            align-items: center;
+        }
+
+        .meta-label {
+            font-weight: 500;
+            color: #555;
+            margin-right: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-submitted {
+            background-color: #e6f7ee;
+            color: #0a7c4a;
+            border: 1px solid #b8e6d0;
+        }
+
+        .status-late {
+            background-color: #fff3e6;
+            color: #cc6b00;
+            border: 1px solid #ffd9b3;
+        }
+
+        .status-pending {
+            background-color: #f0f0f0;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
     </style>
 </head>
 <body>
@@ -339,11 +376,24 @@
 
 
     <div th:each="assignment : ${assignments}" >
+
         <a th:href="@{'/assignmentAnswer'(assignmentId=${assignment.getId()})}" class="assignment-link">
             <div class="assignment-card" th:data-id="${assignment.getId()}">
         <div class="assignment-header">
             <h2 class="assignment-title" th:text="${assignment.getAssignmentTitle()}">Assignment </h2>
         </div>
+
+                <div class="meta-row status-display">
+                    <span class="meta-label">Submission Status:</span>
+                    <span class="meta-value status-badge"
+                          th:text="${assignmentStatuses[assignment.id] == 'Answered on time' ? 'Submitted' :
+                              (assignmentStatuses[assignment.id] == 'Answered late' ? 'Submitted Late' : 'Pending Submission')}"
+                          th:classappend="
+                      ${assignmentStatuses[assignment.id] == 'Answered on time'} ? 'status-submitted' :
+                      (${assignmentStatuses[assignment.id] == 'Answered late'} ? 'status-late' : 'status-pending')">
+                    Status Indicator
+                </span>
+                </div>
 
         <div class="assignment-meta">
             <div class="meta-row">
@@ -354,6 +404,8 @@
                 <span class="meta-label">Due Date</span>
                 <span class="meta-value due-date" th:text="${assignment.getDate()}">Date</span>
             </div>
+
+
         </div>
 
         <div class="assignment-description" th:text="${assignment.getAssignmentDescription()}">

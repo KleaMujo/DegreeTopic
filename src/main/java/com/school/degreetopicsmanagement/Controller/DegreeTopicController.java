@@ -69,7 +69,7 @@ public class DegreeTopicController {
         );
 
         // Fetch all degree topics for the teacher
-        List<DegreeTopic> degreeTopics = degreeTopicRespository.findByTeacher(currentUser);
+        List<DegreeTopic> degreeTopics = degreeTopicRespository.findAllByTeacher(currentUser);
 
         // Fetch assignments for the teacher
         List<Assignment> assignments = assignmentRepository.findByTeacherId(currentUser.getId());
