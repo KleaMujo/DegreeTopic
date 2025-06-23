@@ -6,6 +6,7 @@ import com.school.degreetopicsmanagement.DataObjects.MessageDTO;
 import com.school.degreetopicsmanagement.Model.*;
 import com.school.degreetopicsmanagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -326,13 +327,18 @@ public class DegreeTopicController {
 
 
 
-    @PostMapping(value = "/deleteDegreeTopic")
-    public String  deleteDegreeTopic(@RequestParam(value = "id") Long degreeTopicId) {
-        System.out.println(" DegreeTopic me id " + degreeTopicId + " u fshi ");
-        degreeTopicRespository.deleteById(degreeTopicId);
-        return "success";
 
+
+    @PostMapping("/deleteDegreeTopic")
+    public ResponseEntity<String> deleteDegreeTopic(@RequestParam("id") Long degreeTopicId) {
+        if (!degreeTopicRespository.existsById(degreeTopicId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("DegreeTopic me id " + degreeTopicId + " nuk ekziston.");
+        }
+
+        degreeTopicRespository.deleteById(degreeTopicId);
+        return ResponseEntity.ok("DegreeTopic me id " + degreeTopicId + " u fshi me sukses.");
     }
+
 
 
     @GetMapping(value="notifications")

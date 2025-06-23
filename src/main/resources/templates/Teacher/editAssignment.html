@@ -235,74 +235,94 @@
 <input type="hidden" th:value="${assignment.getId()}" id="assignmentId">
 
 <script>
-
-
-
-
-
     function editAssignment() {
-        var assignmentDto = {
-            dueDate: document.getElementById("dueDate").value,
+        const dueDate = document.getElementById("dueDate").value.trim();
+        const title = document.getElementById("assignmentTitle").value.trim();
+        const description = document.getElementById("assignmentDescription").value.trim();
+        const linkUrl = document.getElementById("hiddenLinkUrl").value;
+        const linkText = document.getElementById("hiddenLinkText").value;
+        const assignmentId = document.getElementById("assignmentId").value;
+        const fileInput = document.getElementById('fileInput');
 
-            assignmentTitle: document.getElementById("assignmentTitle").value,
-            assignmentDescription: document.getElementById("assignmentDescription").value,
-            linkUrl: document.getElementById("hiddenLinkUrl").value,
-            linkText: document.getElementById("hiddenLinkText").value
+        // Validation
+        if (!dueDate) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Due Date',
+                text: 'Please enter the due date.'
+            });
+            return;
+        }
+
+        if (!title) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Title',
+                text: 'Please enter the assignment title.'
+            });
+            return;
+        }
+
+        if (!description) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Description',
+                text: 'Please enter the assignment instructions.'
+            });
+            return;
+        }
+
+        const assignmentDto = {
+            dueDate: dueDate,
+            assignmentTitle: title,
+            assignmentDescription: description,
+            linkUrl: linkUrl,
+            linkText: linkText
         };
-        var assignmentId = document.getElementById("assignmentId").value;
 
-        var fileInput = document.getElementById('fileInput');
-        var formData = new FormData();
+        const formData = new FormData();
+        formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], { type: "application/json" }));
 
-        // Add assignmentId as a request param
-        // (Since it's a @RequestParam, it should be in the URL or query string)
-        // We'll append it to the URL
-
-        // Convert assignmentDto object to JSON string to send as a separate field
-        formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {type: "application/json"}));
-
-        // Add file if exists
         if (fileInput.files.length > 0) {
             formData.append("file", fileInput.files[0]);
         }
 
         $.ajax({
             type: "POST",
-            url: "/editAssignment?id=" + assignmentId,  // fix URL param
+            url: "/editAssignment?id=" + assignmentId,
             data: formData,
             processData: false,
             contentType: false,
             cache: false,
             timeout: 15000,
             success: function(response) {
-                console.log("Success:", response);
                 Swal.close();
                 Swal.fire({
                     title: 'Success!',
                     text: response,
                     icon: 'success',
                 }).then(function () {
-                    button.disabled = false;
                     location.reload();
                 });
-
             },
             error: function(err) {
                 console.error("Error:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'Something went wrong while editing the assignment.'
+                });
             }
         });
     }
 
 
+
     function addLink() {
         const linkText = document.getElementById("linkText").value;
         const linkUrl = document.getElementById("linkUrl").value;
-
-
         document.getElementById("hiddenLinkText").value = linkText;
         document.getElementById("hiddenLinkUrl").value = linkUrl;
-
-
         const modal = bootstrap.Modal.getInstance(document.getElementById("linkModal"));
         modal.hide();
     }

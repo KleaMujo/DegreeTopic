@@ -273,23 +273,25 @@
         if (!confirmed) return;
 
         const degreeTopicId = button.getAttribute("data-id");
+
         $.ajax({
             type: "POST",
-            contentType: "application/json",
-            headers: { 'x-my-custom-header': 'some value' },
             url: "/deleteDegreeTopic?id=" + degreeTopicId,
+            headers: { 'x-my-custom-header': 'some value' },
             cache: false,
             timeout: 1500,
             success: function (response) {
                 if (response) {
-                    alert("success");
+                    alert("Success!");
+                    window.location.reload(); // This runs only after user clicks "OK"
                 }
-
             },
             error: function (error) {
-                // Optionally handle the error
+                console.error("Error deleting degree topic:", error);
+                alert("An error occurred while deleting.");
             }
         });
+
     }
 
 </script>

@@ -3,7 +3,13 @@ package com.school.degreetopicsmanagement.Controller;
 import com.school.degreetopicsmanagement.DataObjects.AssignmentDto;
 import com.school.degreetopicsmanagement.Model.*;
 import com.school.degreetopicsmanagement.Repository.*;
+import io.github.classgraph.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +23,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+
+
 
 @Controller
 public class AssignmentController {
@@ -315,9 +324,20 @@ public class AssignmentController {
 
         Assignment assignment = assignmentRepository.findById(assignmentAnswer.getAssignmentId()).get();
         modelAndView.addObject("assignment", assignment);
+        String degreeTopicFolderName = assignment.getDegreeTopic();
+        String getPropertyPicturesPath =  "/attachments/" + degreeTopicFolderName+ "/" + assignmentAnswer.getFileName();
+        modelAndView.addObject("getPropertyPicturesPath", getPropertyPicturesPath);
+
 
         modelAndView.setViewName("Student/assignmentAnswers1");
         return modelAndView;
     }
+
+
+
+
+
+
+
 
 }

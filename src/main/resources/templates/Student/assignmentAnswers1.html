@@ -439,28 +439,76 @@
                 </div>
                 <div class="file-attachment">
                     <div class="file-info">
-                        <div class="file-icon">
-                            <i class="fas fa-file-word"></i>
+
+                        <div th:if="${assignmentAnswer.fileName != null}" class="resource-item">
+                            <div th:if="${#strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.jpg')
+                          || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.jpeg')
+                          || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.png')
+                          || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.gif')}">
+                                <!-- Image Preview -->
+                                <img th:src="@{${getPropertyPicturesPath}}"
+                                     class="assignment-image img-fluid"
+                                     alt="Assignment Attachment"
+                                     style="max-width: 100%; height: auto; margin-bottom: 10px;"/>
+                                <br>
+                                <a th:href="@{${getPropertyPicturesPath}}"
+                                   class="download-btn btn btn-sm btn-outline-primary"
+                                   th:attr="data-filename=${assignmentAnswer.fileName}"
+                                   download>
+                                    <i class="fas fa-download"></i> Download Image
+                                </a>
+                            </div>
+
+                            <div th:unless="${#strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.jpg')
+                            || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.jpeg')
+                            || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.png')
+                            || #strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.gif')}">
+                                <!-- Non-image File -->
+                                <div class="file-preview">
+                                    <i class="far fa-file-alt fa-3x"></i>
+                                    <p th:text="${assignmentAnswer.fileName}"></p>
+                                </div>
+                                <a th:href="@{${getPropertyPicturesPath}}"
+                                   class="download-btn btn btn-sm btn-outline-primary"
+                                   th:attr="data-filename=${assignmentAnswer.fileName}"
+                                   download>
+                                    <i class="fas fa-download"></i> Download File
+                                </a>
+
+                                <!-- PDF Viewer (if PDF) -->
+                                <div th:if="${#strings.endsWith(assignmentAnswer.fileName.toLowerCase(), '.pdf')}"
+                                     class="mt-3">
+                                    <iframe th:src="@{${getPropertyPicturesPath}}"
+                                            width="100%"
+                                            height="500px"
+                                            style="border: 1px solid #ddd; border-radius: 4px;">
+                                    </iframe>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <img
-                                 th:src="${assignment.getPropertyPicturesPath()}"
-                                 id="image" loading="eager" class="img-fluid"/>
-                        </div>
+
+
                     </div>
                 </div>
             </div>
 
-            <div class="download-section">
-                <a th:href="@{'/download/' + ${assignmentAnswer.fileName}}" class="btn-download">
-                    <i class="fas fa-download"></i>
-                    Download Submission
-                </a>
+            <div class="download-section mt-4">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="downloadAssignmentFile()">
+                    <i class="fas fa-file-pdf"></i>
+                    Download Submission (PDF)
+                </button>
             </div>
+
+
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</script>
+
 </body>
 </html>

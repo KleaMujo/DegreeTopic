@@ -160,7 +160,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="dueDate" class="form-label">Due Date</label>
-                            <input type="date" id="dueDate" class="form-control">
+                            <input type="date" id="dueDate" class="form-control" required>
                         </div>
                     </div>
 
@@ -175,12 +175,12 @@
             <div class="card-body">
                 <div class="form-group">
                     <label  class="form-label">Assignment Title</label>
-                    <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle">
+                    <input type="text" class="form-control" placeholder="Enter assignment title" id="assignmentTitle" required>
                 </div>
 
                 <div class="form-group">
                     <label  class="form-label">Assignment Instructions</label>
-                    <textarea id="assignmentDescription" class="form-control"></textarea>
+                    <textarea id="assignmentDescription" class="form-control" required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -188,7 +188,7 @@
                     <div class="file-upload" id="fileUploadArea">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Drag and drop files here or <span style="color: #4a7dff; text-decoration: underline;">browse</span></p>
-                        <input type="file" name="file" id="fileInput" style="display: none;">
+                        <input type="file" name="file" id="fileInput" style="display: none;"  >
                     </div>
                 </div>
                 <input type="hidden" id="hiddenLinkText">
@@ -243,31 +243,70 @@
 
     function createAssignment() {
         const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0]; // Will be undefined if no file selected
-        const select = document.getElementById('recipient');
+        const file = fileInput.files[0];
+        const recipientSelect = document.getElementById('recipient');
+        const dueDate = document.getElementById("dueDate").value.trim();
+        const title = document.getElementById("assignmentTitle").value.trim();
+        const description = document.getElementById("assignmentDescription").value.trim();
 
-        const selectedValue = select.value; // get current selected id
-        const selectedText = select.options[select.selectedIndex]?.text || '';
-        const nameValue = selectedText.split(' - ')[1] || ''; // get the part after ' - '
+        // Validation
+        if (!recipientSelect.value) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Recipient',
+                text: 'Please select a student recipient.'
+            });
+            return;
+        }
+
+        if (!dueDate) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Due Date',
+                text: 'Please enter a due date.'
+            });
+            return;
+        }
+
+        if (!title) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Title',
+                text: 'Please enter the assignment title.'
+            });
+            return;
+        }
+
+        if (!description) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Description',
+                text: 'Please enter the assignment instructions.'
+            });
+            return;
+        }
+        if (!file) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing File',
+                text: 'Please enter the assignment file.'
+            });
+            return;
+        }
+
+        const selectedText = recipientSelect.options[recipientSelect.selectedIndex]?.text || '';
+        const nameValue = selectedText.split(' - ')[1] || '';
 
         const assignmentDto = {
-            studentId: selectedValue,
-            degreeTopic :nameValue,
-            dueDate: document.getElementById("dueDate").value,
-            assignmentTitle: document.getElementById("assignmentTitle").value,
-            assignmentDescription: document.getElementById("assignmentDescription").value,
+            studentId: recipientSelect.value,
+            degreeTopic: nameValue,
+            dueDate: dueDate,
+            assignmentTitle: title,
+            assignmentDescription: description,
             linkUrl: document.getElementById("hiddenLinkUrl").value,
             linkText: document.getElementById("hiddenLinkText").value,
             fileName: file ? file.name : null
         };
-
-        console.log("Student ID:", assignmentDto.studentId);
-        console.log("Due Date:", assignmentDto.dueDate);
-        console.log("Title:", assignmentDto.assignmentTitle);
-        console.log("Description:", assignmentDto.assignmentDescription);
-        console.log("Link URL:", assignmentDto.linkUrl);
-        console.log("Link Text:", assignmentDto.linkText);
-        console.log("File Name:", assignmentDto.fileName);
 
         const formData = new FormData();
         formData.append("assignmentDto", new Blob([JSON.stringify(assignmentDto)], {
@@ -285,22 +324,26 @@
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log("Assignment created successfully");
                 Swal.close();
                 Swal.fire({
                     title: 'Success!',
                     text: response,
                     icon: 'success',
                 }).then(function () {
-                    button.disabled = false;
                     location.reload();
                 });
             },
             error: function (error) {
                 console.error("Error:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Create Assignment',
+                    text: 'An error occurred while creating the assignment.'
+                });
             }
         });
     }
+
 
     function addLink() {
         const linkText = document.getElementById("linkText").value;
