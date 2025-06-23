@@ -16,7 +16,6 @@ public interface DegreeTopicRespository extends JpaRepository<DegreeTopic, Long>
     @Query("SELECT d FROM DegreeTopic d WHERE d.teacher.id = :teacherId")
     List<DegreeTopic> findAllByTeacherId(@Param("teacherId") Long teacherId);
 
-    long countByTeacherAndStudentIsNotNull(User teacher);
 
     long countByTeacher(User teacher);
 

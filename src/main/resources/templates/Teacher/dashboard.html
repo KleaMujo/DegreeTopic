@@ -91,7 +91,8 @@
     <div class="summary-cards">
       <div class="card">Total Topics<br><span th:text="${totalTopics}"></span></div>
       <div class="card">Assigned Students<br><span th:text="${assignedStudents}"></span></div>
-      <div class="card">Assignments<br><span th:text="${totalAssignments}"></span></div>
+      <div class="card">Assignments<br>
+        <p th:text="${totalAssignments}"></p></div>
 
 
 
@@ -104,7 +105,7 @@
     <div class="charts">
       <div class="chart">
         <h5>Topics Status (Pie)</h5>
-        <canvas id="topicsStatusChart"></canvas>
+        <canvas id="dashboardChart"></canvas>
       </div>
       <div class="chart">
         <h5>Students per Topic (Bar)</h5>
@@ -140,57 +141,21 @@
   </div>
 </div>
 
-<script>
-  // Example Chart Data (to be populated dynamically using Thymeleaf)
-  const topicStatusMap = /*[[${topicStatusMap}]]*/ {};
-  const studentsPerTopic = /*[[${studentsPerTopic}]]*/ {};
 
-  // Pie Chart
-  new Chart(document.getElementById('topicsStatusChart'), {
-    type: 'pie',
-    data: {
-      labels: Object.keys(topicStatusMap),
-      datasets: [{
-        label: 'Topics Status',
-        data: Object.values(topicStatusMap),
-        backgroundColor: ['#007bff', '#ffc107', '#dc3545']
-      }]
-    }
-  });
-
-  // Donut Chart
-  new Chart(document.getElementById('topicsDonutChart'), {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(topicStatusMap),
-      datasets: [{
-        label: 'Topic Distribution',
-        data: Object.values(topicStatusMap),
-        backgroundColor: ['#17a2b8', '#28a745', '#fd7e14']
-      }]
-    }
-  });
-
-  // Bar Chart
-  new Chart(document.getElementById('studentsPerTopicChart'), {
+  <script>
+    const ctx = document.getElementById('dashboardChart').getContext('2d');
+    const chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: Object.keys(studentsPerTopic),
-      datasets: [{
-        label: 'Students per Topic',
-        data: Object.values(studentsPerTopic),
-        backgroundColor: '#6610f2'
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
+    labels: ['Topics', 'Assignments', 'Assigned Students'],
+    datasets: [{
+    label: 'Overview',
+    data: [${totalTopics}, ${totalAssignments}, ${assignedStudents}],
+    backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f']
+  }]
+  }
   });
 </script>
+
 </body>
 </html>

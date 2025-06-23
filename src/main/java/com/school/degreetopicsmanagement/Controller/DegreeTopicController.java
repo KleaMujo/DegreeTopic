@@ -47,40 +47,19 @@ public class DegreeTopicController {
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
         User currentUser = userRepository.findByUsername(authenticatedUser.getUsername());
 
-        // Summary counts
         long totalTopics = degreeTopicRespository.countByTeacher(currentUser);
-        long assignedStudents = degreeTopicRespository.countByTeacherAndStudentIsNotNull(currentUser);
-//        long pendingRequests = degreeTopicRequestRepository.countByDegreeTopic_TeacherAndStatus(currentUser, "PENDING");
+
         long totalAssignments = assignmentRepository.countByTeacherId(currentUser.getId());
-//        long unreadMessages = messageRepository.countByMessageToAndSeenFalse(currentUser.getUsername());
+        System.out.println("po");
 
-        // Chart data
-        Map<String, Long> topicStatusMap = new HashMap<>();
-        topicStatusMap.put("Assigned", assignedStudents);
-        topicStatusMap.put("Unassigned", totalTopics - assignedStudents);
-
-
-        Map<String, Long> studentsPerTopic = degreeTopicRespository.countStudentsPerTopic(currentUser.getId());
-
-        // Recent activities (simplified example)
-        List<String> recentActivities = List.of(
-                "New topic added: AI in Medicine",
-                "Student John Doe submitted assignment",
-                "New request from Jane Smith"
-        );
-
-        // Fetch all degree topics for the teacher
         List<DegreeTopic> degreeTopics = degreeTopicRespository.findAllByTeacher(currentUser);
 
-        // Fetch assignments for the teacher
         List<Assignment> assignments = assignmentRepository.findByTeacherId(currentUser.getId());
 
-        // Fetch answers from students (optional: only for those assignments)
         List<AssignmentAnswer> answers = assignmentAnswerRepository.findByAssignmentIdIn(
                 assignments.stream().map(Assignment::getId).collect(Collectors.toList())
         );
 
-        // Map of assignmentId -> AssignmentAnswer
         Map<Long, AssignmentAnswer> assignmentAnswersMap = answers.stream()
                 .collect(Collectors.toMap(AssignmentAnswer::getAssignmentId, Function.identity()));
 
@@ -89,23 +68,11 @@ public class DegreeTopicController {
         modelAndView.addObject("assignmentAnswers", assignmentAnswersMap);
 
         modelAndView.addObject("totalTopics", totalTopics);
-        modelAndView.addObject("assignedStudents", assignedStudents);
-//        modelAndView.addObject("pendingRequests", pendingRequests);
-        modelAndView.addObject("totalAssignments", totalAssignments);
-//        modelAndView.addObject("unreadMessages", unreadMessages);
-        modelAndView.addObject("topicStatusMap", topicStatusMap);
-        modelAndView.addObject("studentsPerTopic", studentsPerTopic);
-        modelAndView.addObject("recentActivities", recentActivities);
+         modelAndView.addObject("totalAssignments", totalAssignments);
+
         modelAndView.addObject("currentPath", request.getRequestURI());
 
-        Map<Long, AssignmentAnswer> assignmentAnswers = new HashMap<>();
-        for (Assignment assignment : assignments) {
-            AssignmentAnswer assignmentAnswer = assignmentAnswerRepository.findByAssignmentId(assignment.getId());
-            if (assignmentAnswer != null) {
-                assignmentAnswers.put(assignment.getId(), assignmentAnswer);
-            }
-        }
-        modelAndView.addObject("assignmentAnswers", assignmentAnswers);
+
 
 
         modelAndView.setViewName("Teacher/dashboard");

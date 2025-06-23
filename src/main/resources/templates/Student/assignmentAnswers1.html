@@ -348,29 +348,49 @@
             }
 
         }
-        .status-submitted {
-            background-color: #e6f7ee;
-            color: #0a7c4a;
-            border: 1px solid #b8e6d0;
+        /* Add to your existing styles */
+        @media print, (prefers-color-scheme: print) {
+            .academic-card {
+                width: 100% !important;
+                height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+
+            .content-section, .status-section {
+                break-inside: avoid-page;
+            }
+
+            /* Ensure images are visible in PDF */
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+
+            /* Hide any interactive elements */
+            button, .download-btn {
+                display: none !important;
+            }
         }
 
-        .status-late {
-            background-color: #fff3e6;
-            color: #cc6b00;
-            border: 1px solid #ffd9b3;
+        /* Client-side only class */
+        .no-pdf {
+            display: none;
         }
 
-        .status-pending {
-            background-color: #f0f0f0;
-            color: #666;
-            border: 1px solid #ddd;
+        /* Make sure the card isn't too wide */
+        .academic-card {
+            max-width: 800px;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
 
 <div class="academic-container">
-    <div class="academic-card">
+    <div class="academic-card single-page-pdf">  <!-- Added class here -->
         <div class="academic-header">
             <div class="university-logo">
                 <i class="fas fa-graduation-cap"></i>
@@ -507,8 +527,59 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function downloadAssignmentFile() {
+        // Get the element to convert
+        const element = document.querySelector('.academic-card');
 
+        // Optimize PDF options for single page
+        const opt = {
+            margin: [10, 10, 10, 10],  // Top, Right, Bottom, Left
+            filename: 'assignment_submission_' +
+                document.querySelector('.assignment-title').textContent.trim() + '.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: {
+                scale: 1,  // Lower scale for smaller file size
+                logging: false,
+                useCORS: true,
+                scrollY: 0  // Prevent scroll issues
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait',
+                compress: true
+            },
+            pagebreak: {
+                mode: 'avoid-all'  // Force single page
+            }
+        };
+
+        // Temporary show loading state
+        const btn = document.querySelector('.download-section button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+        btn.disabled = true;
+
+        // Generate PDF
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .save()
+            .then(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            })
+            .catch(err => {
+                console.error('PDF generation failed:', err);
+                btn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }, 2000);
+            });
+    }
 </script>
-
 </body>
 </html>

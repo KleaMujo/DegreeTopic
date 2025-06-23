@@ -22,7 +22,9 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query("SELECT a FROM Assignment a WHERE a.studentId = :studentId ORDER BY a.date DESC")
     List<Assignment> findAllByStudentIdOrderByDateDesc(@Param("studentId") Long studentId);
 
-    long countByTeacherId(Long teacherId);
+
+    @Query("SELECT COUNT(a) FROM Assignment a WHERE a.teacherId = :userId")
+    long countByTeacherId(@Param("userId") Long userId);
 
 
 }

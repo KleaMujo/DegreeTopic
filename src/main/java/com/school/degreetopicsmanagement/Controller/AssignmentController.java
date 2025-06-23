@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -333,7 +334,18 @@ public class AssignmentController {
         return modelAndView;
     }
 
+    @GetMapping("/assignmentAnswers/pdf/{id}")
+    public void generatePdf(@PathVariable Long id, HttpServletResponse response) throws Exception {
+        AssignmentAnswer assignmentAnswer = assignmentAnswerRepository.findById(id).get();
+        Assignment assignment = assignmentRepository.findById(assignmentAnswer.getAssignmentId()).get();
 
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=assignment_"+id+".pdf");
+
+        // Use a PDF library like iText or Apache PDFBox to generate the PDF
+        // This would involve creating the PDF document programmatically
+        // ...
+    }
 
 
 

@@ -3,12 +3,8 @@ package com.school.degreetopicsmanagement.Controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.school.degreetopicsmanagement.DataObjects.DegreeRequestDTO;
-import com.school.degreetopicsmanagement.Model.DegreeTopic;
-import com.school.degreetopicsmanagement.Model.DegreeTopicRequest;
-import com.school.degreetopicsmanagement.Model.User;
-import com.school.degreetopicsmanagement.Repository.DegreeTopicRequestRepository;
-import com.school.degreetopicsmanagement.Repository.DegreeTopicRespository;
-import com.school.degreetopicsmanagement.Repository.UserRepository;
+import com.school.degreetopicsmanagement.Model.*;
+import com.school.degreetopicsmanagement.Repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,11 +28,15 @@ public class HomeController {
     DegreeTopicRespository degreeTopicRespository;
     @Autowired
     DegreeTopicRequestRepository degreeTopicRequestRepository;
+    @Autowired
+    private AssignmentAnswerRepository assignmentAnswerRepository;
+
     public HomeController(UserRepository userRepository, DegreeTopicRespository degreeTopicRespository) {
         this.userRepository = userRepository;
         this.degreeTopicRespository = degreeTopicRespository;
     }
-
+    @Autowired
+    private AssignmentRepository assignmentRepository;
     @GetMapping("/")
     public ModelAndView homePage(HttpServletRequest httpServletRequest) {
 
@@ -53,26 +53,23 @@ public class HomeController {
             } else if ("professor".equals(user.getRole())) {
                 List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
 
-                List<DegreeRequestDTO> requestsList = new ArrayList<>();
 
-                for (DegreeTopic degreeTopic : degreeTopicList) {
-                    List<DegreeTopicRequest> degreeTopicRequests = degreeTopic.getDegreeTopicRequests();
-                    System.out.println(degreeTopicRequests.size() + " size");
-
-                    for (DegreeTopicRequest degreeTopicRequest : degreeTopicRequests) {
-                        String studentName = degreeTopicRequest.getStudent().getUsername();
-                        String degreeTitle = degreeTopic.getTitle();
-                        String status = degreeTopicRequest.getStatus();
-                        System.out.println(studentName + " std username -> " + degreeTitle);
-
-                        requestsList.add(new DegreeRequestDTO(studentName, degreeTitle,status));
-                    }
+                long assignedStudents = 0L;
+                long totalTopics = degreeTopicRespository.countByTeacher(user);
+                List <Assignment> assignment = assignmentRepository.findByTeacherId(user.getId());
+                for(Assignment a : assignment) {
+                    List<AssignmentAnswer> assignmentAnswer = assignmentAnswerRepository.findAllByAssignmentId(a.getId());
+                    assignedStudents += assignmentAnswer.size();
                 }
-
-                modelAndView.addObject("requests", requestsList);
-            }
+                long totalAssignments = assignmentRepository.countByTeacherId(user.getId());
+                modelAndView.addObject("totalTopics", totalTopics);
+                modelAndView.addObject("assignedStudents", assignedStudents);
+                modelAndView.addObject("totalAssignments", totalAssignments);
 
                 modelAndView.setViewName("/Teacher/professorDashboard");
+
+            }
+
                 return modelAndView;
             }
 
