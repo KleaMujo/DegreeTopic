@@ -24,5 +24,9 @@ public interface AssignmentAnswerRepository extends JpaRepository<AssignmentAnsw
     List <AssignmentAnswer> findAllByAssignmentId(@Param("assignmentId") Long assignmentId);
 
 
+    int countByStudentId(Long studentId);
+
+
+
 }
 

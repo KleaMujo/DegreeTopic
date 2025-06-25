@@ -163,8 +163,8 @@
     <div class="user-dropdown">
       <div class="user-avatar">A</div>
       <div class="dropdown-content">
-        <a href="#"><i class="fas fa-user me-2"></i> Profile</a>
-        <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+         <a href="/"><i class="fas fa-user me-2"></i> Profile</a>
+
         <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
       </div>
     </div>
@@ -192,7 +192,7 @@
               </div>
             </div>
             <div class="ms-3">
-              <h6 class="fw-semibold mb-1">Select a Teacher</h6>
+              <h6 class="fw-semibold mb-1">Select a Degree Topic</h6>
               <p class="text-muted small mb-0">
                 Send messages by selecting from a dropdown that lists teachers along with the degree topics they supervise.
               </p>
@@ -248,7 +248,7 @@
           <div class="mb-3">
           <label for="recipient">Select :</label>
           <select name="recipient" id="recipient" required>
-            <option disabled selected value="">-- Select a student --</option>
+            <option disabled selected value="">-- Select a Degree Topic --</option>
             <option th:each="degreeTopic : ${degreeTopic}"
                     th:value="${@userService.getUsername1(degreeTopic.getTeacher())}"
                     th:text="${degreeTopic.getTitle() + ' - ' + @userService.getUsername1(degreeTopic.getTeacher())}">

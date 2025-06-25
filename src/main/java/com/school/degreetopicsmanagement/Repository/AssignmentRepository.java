@@ -1,6 +1,7 @@
 package com.school.degreetopicsmanagement.Repository;
 
 import com.school.degreetopicsmanagement.Model.Assignment;
+import com.school.degreetopicsmanagement.Model.AssignmentAnswer;
 import com.school.degreetopicsmanagement.Model.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query("SELECT COUNT(a) FROM Assignment a WHERE a.teacherId = :userId")
     long countByTeacherId(@Param("userId") Long userId);
+
+
+    // Count how many assignments a teacher gave to a specific student
+    int countByTeacherIdAndStudentId(Long teacherId, Long studentId);
+
 
 
 }

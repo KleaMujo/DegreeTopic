@@ -1,9 +1,6 @@
 package com.school.degreetopicsmanagement.Repository;
 
-import com.school.degreetopicsmanagement.Model.Assignment;
-import com.school.degreetopicsmanagement.Model.DegreeTopic;
-import com.school.degreetopicsmanagement.Model.DegreeTopicRequest;
-import com.school.degreetopicsmanagement.Model.User;
+import com.school.degreetopicsmanagement.Model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,7 +17,11 @@ public interface DegreeTopicRequestRepository extends JpaRepository<DegreeTopicR
     DegreeTopicRequest findByStudentIdAndStatus(@Param("studentId") User studentId, @Param("status") String status);
 
 
+    @Query("SELECT r FROM DegreeTopicRequest r WHERE r.status = :status AND r.degreeTopic.teacher.id = :teacherId")
+    List<DegreeTopicRequest> findActiveByTeacherId(@Param("status") String status, @Param("teacherId") Long teacherId);
 
+    @Query("SELECT r.degreeTopic.id, COUNT(r) FROM DegreeTopicRequest r WHERE r.status = 'ACTIVE' GROUP BY r.degreeTopic.id")
+    List<Object[]> countActiveRequestsByDegreeTopic();
 
 
 }
