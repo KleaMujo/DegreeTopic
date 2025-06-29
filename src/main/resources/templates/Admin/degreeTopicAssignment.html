@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Academic Assignments - Degree Topic Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2c5aa0;
+            --accent-color: #e2e8f0;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #cbd5e0;
+            --success-color: #2f855a;
+            --warning-color: #c05621;
+            --background-primary: #ffffff;
+            --background-secondary: #f7fafc;
+            --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-heavy: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--background-secondary);
+            color: var(--text-primary);
+            line-height: 1.65;
+            font-weight: 400;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0 3rem 0;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-title {
+            font-size: 1.375rem;
+            font-weight: 500;
+            opacity: 0.9;
+            border-left: 3px solid rgba(255, 255, 255, 0.5);
+            padding-left: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .assignments-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            background: var(--background-primary);
+        }
+
+        .accordion-item:hover {
+            box-shadow: var(--shadow-medium);
+        }
+
+        .accordion-header {
+            margin-bottom: 0;
+        }
+
+        .accordion-button {
+            background: var(--background-primary);
+            border: none;
+            padding: 2rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: relative;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--background-primary);
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1);
+            outline: none;
+        }
+
+        .accordion-button::after {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a365d'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: transform 0.2s ease;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            padding: 2.5rem;
+            background-color: var(--background-primary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .assignment-details {
+            background: var(--background-secondary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--secondary-color);
+            padding: 2rem;
+            border-radius: 6px;
+            margin-bottom: 2.5rem;
+        }
+
+        .assignment-details h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .assignment-details p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .assignment-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--background-primary);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .meta-item:hover {
+            border-color: var(--secondary-color);
+            box-shadow: var(--shadow-light);
+        }
+
+        .meta-icon {
+            color: var(--secondary-color);
+            font-size: 1.125rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-right: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-value {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .resources-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .resource-item {
+            background: var(--background-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+
+        .assignment-image {
+            border-radius: 6px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .download-btn {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        .answer-section {
+            background: #f8fffe;
+            border: 1px solid #c6f6d5;
+            border-left: 4px solid var(--success-color);
+            border-radius: 6px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .answer-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .answer-icon {
+            background: var(--success-color);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .answer-title {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: var(--success-color);
+            margin: 0;
+        }
+
+        .answer-field {
+            margin-bottom: 2rem;
+        }
+
+        .answer-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .field-content {
+            background: var(--background-primary);
+            padding: 1.25rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .no-answer-section {
+            background: #fffbf0;
+            border: 1px solid #fed7aa;
+            border-left: 4px solid var(--warning-color);
+            border-radius: 6px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--warning-color);
+        }
+
+        .no-answer-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .no-answer-section h4 {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-answer-section p {
+            color: #92400e;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .breadcrumb-nav {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        iframe {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: var(--shadow-light);
+        }
+
+        @media (max-width: 768px) {
+            .assignments-container {
+                padding: 0 1rem;
+            }
+
+            .header-title {
+                font-size: 2rem;
+            }
+
+            .topic-title {
+                font-size: 1.125rem;
+            }
+
+            .accordion-button {
+                padding: 1.5rem 1.25rem;
+                font-size: 1rem;
+            }
+
+            .accordion-body {
+                padding: 1.5rem;
+            }
+
+            .assignment-details {
+                padding: 1.5rem;
+            }
+
+            .assignment-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .answer-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .answer-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-section {
+                padding: 2rem 0 1.5rem 0;
+                margin-bottom: 2rem;
+            }
+
+            .accordion-button {
+                padding: 1rem;
+            }
+
+            .accordion-body {
+                padding: 1rem;
+            }
+
+            .assignment-details {
+                padding: 1rem;
+            }
+
+            .answer-section {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="navbar">
+        <div class="user-dropdown">
+            <div class="user-avatar">A</div>
+            <div class="dropdown-content">
+                <a href="/"><i class="fas fa-user me-2"></i> Profile</a>
+                <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Log Out</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="main-content">
+    <div th:replace="/Admin/adminSidebar.html"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <main class="container assignments-container">
+            <div class="accordion" id="assignmentAccordion">
+                <div th:each="entry, iter : ${assignmentAnswerMap.entrySet()}" class="accordion-item">
+                    <h2 class="accordion-header" th:attr="id='heading' + ${iter.index}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                th:attr="data-bs-target='#collapse' + ${iter.index}"
+                                aria-expanded="false">
+                            <i class="fas fa-file-alt me-3"></i>
+                            <span th:text="${entry.key.assignmentTitle}">Research Paper on Machine Learning Applications</span>
+                        </button>
+                    </h2>
+                    <div th:attr="id='collapse' + ${iter.index}" class="accordion-collapse collapse"
+                         th:attrappend="aria-labelledby='heading' + ${iter.index}" data-bs-parent="#assignmentAccordion">
+                        <div class="accordion-body">
+                            <!-- Assignment Details -->
+                            <section class="assignment-details">
+                                <h4 class="mb-3">
+                                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                                    Assignment Details
+                                </h4>
+                                <p class="mb-3" th:utext="${entry.key.assignmentDescription}">
+                                 </p>
+
+                                <div class="assignment-meta">
+                                    <div class="meta-item">
+                                        <i class="fas fa-chalkboard-teacher meta-icon"></i>
+                                        <div>
+                                            <span class="meta-label">Professor:</span>
+                                            <span class="meta-value" th:text="${@userService.getUsername1(entry.key.teacherId)}">Dr. Sarah Johnson</span>
+                                        </div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-user-graduate meta-icon"></i>
+                                        <div>
+                                            <span class="meta-label">Student:</span>
+                                            <span class="meta-value" th:text="${@userService.getUsername1(entry.key.studentId)}">John Anderson</span>
+                                        </div>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-calendar-alt meta-icon"></i>
+                                        <div>
+                                            <span class="meta-label">Date:</span>
+                                            <span class="meta-value" th:text="${entry.key.date}">March 15, 2024</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${entry.key.getLinkUrl() != null || entry.key.fileName != null}" class="resources-section">
+
+
+                                    <div th:if="${entry.key.fileName != null}" class="resource-item">
+                                        <div th:if="${#strings.endsWith(entry.key.fileName.toLowerCase(), '.jpg')
+                          || #strings.endsWith(entry.key.fileName.toLowerCase(), '.jpeg')
+                          || #strings.endsWith(entry.key.fileName.toLowerCase(), '.png')
+                          || #strings.endsWith(entry.key.fileName.toLowerCase(), '.gif')}">
+                                            <!-- Image Preview -->
+                                            <img th:src="@{${entry.key.getPropertyPicturesPath()}}"
+                                                 class="assignment-image img-fluid"
+                                                 alt="Assignment Attachment"
+                                                 style="max-width: 100%; height: auto; margin-bottom: 10px;"/>
+                                            <br>
+                                            <a th:href="@{${entry.key.getPropertyPicturesPath()}}"
+                                               class="download-btn btn btn-sm btn-outline-primary"
+                                               th:attr="data-filename=${entry.key.fileName}"
+                                               download>
+                                                <i class="fas fa-download"></i> Download Image
+                                            </a>
+                                        </div>
+
+                                        <div th:unless="${#strings.endsWith(entry.key.fileName.toLowerCase(), '.jpg')
+                            || #strings.endsWith(entry.key.fileName.toLowerCase(), '.jpeg')
+                            || #strings.endsWith(entry.key.fileName.toLowerCase(), '.png')
+                            || #strings.endsWith(entry.key.fileName.toLowerCase(), '.gif')}">
+
+                                            <!-- PDF Viewer (if PDF) -->
+                                            <div th:if="${#strings.endsWith(entry.key.fileName.toLowerCase(), '.pdf')}"
+                                                 class="mt-3">
+                                                <iframe th:src="@{${entry.key.getPropertyPicturesPath()}}"
+                                                        width="100%"
+                                                        height="500px"
+                                                        style="border: 1px solid #ddd; border-radius: 4px;">
+                                                </iframe>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </section>
+
+                            <!-- Student Answer Section -->
+                            <section th:if="${entry.value != null}" class="answer-section">
+                                <div class="answer-header">
+                                    <div class="answer-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <h3 class="answer-title">Student Submission</h3>
+                                </div>
+
+                                <div class="answer-field">
+                                    <div class="field-label">
+                                        <i class="fas fa-heading"></i>
+                                        Submission Title
+                                    </div>
+                                    <div class="field-content" th:utext="${entry.value.assignmentTitle}">
+                                        Machine Learning in Modern Web Applications: A Comprehensive Analysis
+                                    </div>
+                                </div>
+
+                                <div class="answer-field">
+                                    <div class="field-label">
+                                        <i class="fas fa-file-text"></i>
+                                        Submission Description
+                                    </div>
+                                    <div class="field-content" th:utext="${entry.value.assignmentDescription}">
+                                        This comprehensive research paper examines the integration of machine learning algorithms in contemporary web applications, analyzing performance metrics, implementation challenges, and future trends in the field.
+                                    </div>
+                                </div>
+
+                                <div class="answer-field">
+                                    <div class="field-label">
+                                        <i class="fas fa-clock"></i>
+                                        Submission Date
+                                    </div>
+                                    <div class="field-content" th:text="${entry.value.date}">
+                                        March 28, 2024
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- No Answer Section -->
+                            <section th:if="${entry.value == null}" class="no-answer-section">
+                                <div class="no-answer-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h4 class="mb-2">Pending Submission</h4>
+                                <p class="mb-0">No student submission has been received for this assignment yet.</p>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

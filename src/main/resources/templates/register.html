@@ -3,47 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
-
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
   <title>Register</title>
 
-  <style>
-    .failed {
-      color: red;
-    }
-    .loggedOut {
-      color: lightskyblue;
-    }
-    .loginDiv {
-      border: 1px solid black;
-      border-radius: 10px;
-      margin: 10% 35%;
-      background-color: #c98d8e;
-    }
-    .classDiv {
-      margin: 20px;
-      display: flex;
-      font-family: sans-serif;
-      font-size: larger;
-      color: white;
-      justify-content: center;
-    }
-    .label {
-      margin-right: 20px;
-      width: 20%;
-    }
-    .input {
-      width: 50%;
-      border-radius: 5px;
-    }
-    .button {
-      border: 1px solid black;
-      border-radius: 5px;
-      padding: 5px 20px;
-      font-size: medium;
-      background-color: white;
-    }
-  </style>
+  <!-- Font Awesome 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <!-- Add jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -53,73 +17,497 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <link href="/assets/vendor/jquery/css/bootstrap.min.css" rel="stylesheet">
 
-</head>
-<body>
+  <style>
+    :root {
+      --primary-color: #1a365d;
+      --secondary-color: #2c5aa0;
+      --accent-color: #e2e8f0;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --border-color: #cbd5e0;
+      --success-color: #2f855a;
+      --error-color: #c53030;
+      --background-primary: #ffffff;
+      --background-secondary: #f7fafc;
+      --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(26,54,93,0.02)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      z-index: -1;
+    }
+
+    .min-vh-100 {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .auth-full-page-content {
+      background: var(--background-primary);
+      border-radius: 12px;
+      box-shadow: var(--shadow-heavy);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      padding: 3rem 2.5rem;
+    }
+
+    .auth-full-page-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    }
+
+    .auth-logo {
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border-radius: 12px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-medium);
+      transition: all 0.3s ease;
+    }
+
+    .logo-container:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-heavy);
+    }
+
+    .degree-icon {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .auth-content {
+      flex: 1;
+    }
+
+    .auth-content h5 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      text-align: center;
+      letter-spacing: -0.025em;
+    }
+
+    .auth-content p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 0;
+      font-weight: 500;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: var(--background-primary);
+      color: var(--text-primary);
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+      outline: none;
+    }
+
+    .form-control::placeholder {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .form-select {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: var(--background-primary);
+      color: var(--text-primary);
+      width: 100%;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+    }
+
+    .form-select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+      outline: none;
+    }
+
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .input-group-text {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-right: none;
+      color: var(--text-secondary);
+      padding: 0.875rem 1rem;
+      border-radius: 6px 0 0 6px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      flex: 1;
+    }
+
+    .input-group .form-control:focus {
+      border-left: 1px solid var(--secondary-color);
+    }
+
+    .input-group .form-control:focus + .input-group-text,
+    .form-control:focus ~ .input-group-text {
+      border-color: var(--secondary-color);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border: none;
+      border-radius: 6px;
+      padding: 0.875rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .mb-3 {
+      margin-bottom: 1.5rem !important;
+    }
+
+    .mt-4 {
+      margin-top: 2rem !important;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem !important;
+    }
+
+    .pt-2 {
+      padding-top: 1rem !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-muted {
+      color: var(--text-muted) !important;
+    }
+
+    .text-primary {
+      color: var(--secondary-color) !important;
+    }
+
+    .fw-semibold {
+      font-weight: 600 !important;
+    }
+
+    .d-flex {
+      display: flex;
+    }
+
+    .flex-column {
+      flex-direction: column;
+    }
+
+    .h-100 {
+      height: 100%;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .d-block {
+      display: block;
+    }
+
+    .justify-content-center {
+      justify-content: center;
+    }
+
+    .align-items-center {
+      align-items: center;
+    }
+
+    .my-auto {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .mb-0 {
+      margin-bottom: 0 !important;
+    }
+
+    .mb-4 {
+      margin-bottom: 1.5rem !important;
+    }
+
+    .mb-md-5 {
+      margin-bottom: 3rem !important;
+    }
+
+    .login-link {
+      color: var(--secondary-color) !important;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .login-link:hover {
+      color: var(--primary-color) !important;
+      text-decoration: underline;
+    }
+
+    .login-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .login-section p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 576px) {
+      .auth-full-page-content {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+      }
+
+      .logo-container {
+        width: 60px;
+        height: 60px;
+      }
+
+      .degree-icon {
+        font-size: 1.5rem;
+      }
+
+      .auth-content h5 {
+        font-size: 1.5rem;
+      }
+
+      .min-vh-100 {
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .auth-full-page-content {
+        padding: 1.5rem 1rem;
+      }
+
+      .login-section {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+    }
+
+    /* Legacy classes for compatibility */
+    .failed {
+      color: red;
+      display: none;
+    }
+    .loggedOut {
+      color: lightskyblue;
+      display: none;
+    }
+    .loginDiv {
+      display: none;
+    }
+    .classDiv {
+      display: none;
+    }
+    .label {
+      display: none;
+    }
+    .input {
+      display: none;
+    }
+    .button {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
 <div class="d-flex justify-content-center align-items-center min-vh-100">
-  <div class="col-xxl-3 col-lg-4 col-md-5">
-    <div class="auth-full-page-content d-flex p-sm-5 p-4" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
-      <div class="w-100">
-        <div class="d-flex flex-column h-100">
-          <div class="mb-4 mb-md-5 text-center">
-            <a href="/" class="d-block auth-logo">
-              <div class="logo-container">
-                <div class="degree-icon">🎓</div>
-              </div>
-            </a>
+  <div class="auth-full-page-content d-flex">
+    <div class="w-100">
+      <div class="d-flex flex-column h-100">
+        <div class="mb-4 mb-md-5 text-center">
+          <a href="/" class="d-block auth-logo">
+            <div class="logo-container">
+              <div class="degree-icon">🎓</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="auth-content my-auto">
+          <div class="text-center">
+            <h5 class="mb-0">Register</h5>
+            <p class="text-muted mt-2">Please enter your user information.</p>
           </div>
 
-          <div class="auth-content my-auto">
-            <div class="text-center">
-              <h5 class="mb-0">Register</h5>
-              <p class="text-muted mt-2">Please enter your user information.</p>
+          <form class="mt-4 pt-2">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required />
+              </div>
             </div>
 
-            <form class="mt-4 pt-2">
-              <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" required />
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required />
               </div>
+            </div>
 
-              <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required />
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
               </div>
+            </div>
 
-              <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required />
-              </div>
-
-              <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select id="role" class="form-select">
+            <div class="mb-3">
+              <label for="role" class="form-label">Role</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-user-tag"></i></span>
+                <select id="role" class="form-select" style="border-left: none; border-radius: 0 6px 6px 0;">
                   <option value="student">Student</option>
                   <option value="professor">Professor</option>
                 </select>
               </div>
-
-              <div class="mb-3">
-                <button type="button" onclick="register()" class="btn btn-primary w-100">Register</button>
-              </div>
-            </form>
-
-            <div class="mt-4 pt-2 text-center">
-              <p class="text-muted mb-0">Already have an account?
-                <a href="/login" class="text-primary fw-semibold">Login now</a>
-              </p>
             </div>
-          </div>
 
-          <div class="mt-4 mt-md-5 text-center">
-            <!-- Optional footer -->
+            <div class="mb-3">
+              <button type="button" onclick="register()" class="btn btn-primary w-100">Register</button>
+            </div>
+          </form>
+
+          <div class="login-section">
+            <p>Already have an account?</p>
+            <a href="/login" class="login-link">Login now</a>
           </div>
+        </div>
+
+        <div class="mt-4 mt-md-5 text-center">
+          <!-- Optional footer -->
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 <script>
   function register() {
@@ -131,7 +519,7 @@
     userDTO.usernameDTO = username;
     userDTO.emailDTO = email;
     userDTO.passwordDTO = password;
-    userDTO.roleDTO= role;
+    userDTO.roleDTO = role;
 
     console.log("Sending data: ", userDTO);
 
@@ -156,10 +544,7 @@
         console.log("Error:", status, error);
       }
     });
-
-
   }
 </script>
-
 </body>
 </html>

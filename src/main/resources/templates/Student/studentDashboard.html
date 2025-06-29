@@ -287,6 +287,12 @@
 
 <div class="dashboard-container">
 
+  <div th:if="${noTopicMessage}" class="alert alert-warning" style="padding: 20px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; border-radius: 8px; margin-bottom: 20px;">
+    <i class="fas fa-exclamation-circle"></i>
+    <span th:text="${noTopicMessage}">You have not chosen any degree topic yet</span>
+    <br>
+    <a href="/topicsStudent" class="btn btn-primary" style="margin-top: 10px;">Choose your degree topic</a>
+  </div>
 
   <!-- Topic Information Section -->
   <div class="topic-info-section">

@@ -396,7 +396,7 @@
                 <i class="fas fa-graduation-cap"></i>
             </div>
             <h1 th:text="${assignmentAnswer.getAssignmentTitle() + ' Assignment '}"> </h1>
-            <div class="subtitle">Assignment Submission </div>
+            <div class="subtitle"> </div>
         </div>
 
         <div class="academic-body">
@@ -407,7 +407,7 @@
                         <span class="status-badge"
                               th:classappend="${assignmentAnswer.getStatus() == 'Answered on time' ? 'status-submitted' :
                                              (assignmentAnswer.getStatus() == 'Answered late' ? 'status-late' : 'status-pending')}"
-                              th:text="${assignmentAnswer.getStatus()}">
+                              th:utext="${assignmentAnswer.getStatus()}">
 
                         </span>
                     </div>
@@ -416,14 +416,14 @@
                 <div class="status-card">
                     <div class="status-label">Submission Date</div>
                     <div class="status-value" th:text="${#dates.format(assignmentAnswer.date, 'MMMM dd, yyyy')}">
-                        March 15, 2025
+
                     </div>
                 </div>
 
                 <div class="status-card">
                     <div class="status-label">Student</div>
                     <div class="status-value" th:text="${@userService.getUsername1(assignmentAnswer.studentId)}">
-                        John Doe
+
                     </div>
                 </div>
             </div>
@@ -435,7 +435,6 @@
                 </div>
                 <div class="content-box">
                     <h3 class="assignment-title" th:text="${assignmentAnswer.assignmentTitle}">
-                        Research Paper on Machine Learning Applications
                     </h3>
                 </div>
             </div>
@@ -446,7 +445,7 @@
                     Assignment Description
                 </div>
                 <div class="content-box">
-                    <p class="assignment-description" th:text="${assignmentAnswer.assignmentDescription}">
+                    <p class="assignment-description" th:utext="${assignmentAnswer.assignmentDescription}">
                         This assignment requires students to conduct comprehensive research on the practical applications of machine learning in modern industries. The paper should be 3000-5000 words and include at least 15 academic references from peer-reviewed journals.
                     </p>
                 </div>

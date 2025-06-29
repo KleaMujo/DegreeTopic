@@ -17,7 +17,9 @@ public class Message {
     @Column(name = "id")
     private Long id;
 
+    @Column(name="message",columnDefinition = "TEXT")
     private String message;
+
     private String messageTo;
     private Date date;
     private String messageFrom;

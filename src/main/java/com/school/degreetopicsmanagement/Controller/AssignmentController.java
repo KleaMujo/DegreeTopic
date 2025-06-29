@@ -84,7 +84,7 @@ public class AssignmentController {
     @ResponseBody
     public ResponseEntity<String> createAssignment(
             @RequestPart("assignmentDto") AssignmentDto assignmentDto,
-            @RequestPart("file") MultipartFile file) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
@@ -93,48 +93,55 @@ public class AssignmentController {
         // Base directory
         Path baseUploadPath = Paths.get("/home/data/DegreeTopic/");
 
-        // Clean and sanitize the degree topic to use as folder name
+
         String degreeTopicFolderName = assignmentDto.getDegreeTopic();
 
+         degreeTopicFolderName = degreeTopicFolderName.replaceAll("[:\\\\/*?|<>]", "-");
 
-        // Create the full upload path with degree topic folder
-        Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
+         Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
 
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        try {
-            // Create directories if they don't exist
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+        String fileName = null;
+
+        if (file != null && !file.isEmpty()) {
+            fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+            try {
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+
+                Path filePath = uploadPath.resolve(fileName);
+
+
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("File upload failed: " + e.getMessage());
             }
-
-            // Resolve the target file path
-            Path filePath = uploadPath.resolve(fileName);
-
-            // Save the file
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("File upload failed: " + e.getMessage());
         }
+
 
         Assignment assignment = new Assignment();
         assignment.setTeacherId(user.getId());
         assignment.setStudentId(assignmentDto.getStudentId());
-
         assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
         assignment.setAssignmentDescription(assignmentDto.getAssignmentDescription());
         assignment.setFileName(fileName);
-        assignment.setDate(new Date());
+        assignment.setDate(assignmentDto.getDate());
         assignment.setLinkUrl(assignmentDto.getLinkUrl());
         assignment.setLinkText(assignmentDto.getLinkText());
         assignment.setDegreeTopic(assignmentDto.getDegreeTopic());
 
+
         assignmentRepository.save(assignment);
 
-        return ResponseEntity.ok("Assignment created and file saved successfully.");
+        return ResponseEntity.ok("Assignment created successfully.");
     }
+
 
     @GetMapping(value = "/editAssignment")
     public ModelAndView editAssignment(@RequestParam(value = "id") Long assignmentId,ModelAndView modelAndView, HttpServletRequest httpServletRequest) {
@@ -264,29 +271,26 @@ public class AssignmentController {
 
         // Clean and sanitize the degree topic to use as folder name
         String degreeTopicFolderName = assignment.getDegreeTopic();
-
-
-        // Create the full upload path with degree topic folder
         Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
 
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String fileName = null;  // inicializo me null
 
+        if (file != null && !file.isEmpty()) {
+            fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        try {
-            // Create directories if they don't exist
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            try {
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                Path filePath = uploadPath.resolve(fileName);
+
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("File upload failed: " + e.getMessage());
             }
-
-            // Resolve the target file path
-            Path filePath = uploadPath.resolve(fileName);
-
-            // Save the file
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("File upload failed: " + e.getMessage());
         }
 
         Date dueDateItWas = assignment.getDate();
@@ -306,7 +310,7 @@ public class AssignmentController {
         assignmentAnswer.setDate(new Date());
         assignmentAnswer.setStudentId(user.getId());
         assignmentAnswer.setAssignmentId(assignment.getId());
-        assignmentAnswer.setFileName(fileName);
+        assignmentAnswer.setFileName(fileName);  // do të jetë null nëse nuk ka file
         assignmentAnswer.setStatus(status);
 
         assignmentAnswerRepository.save(assignmentAnswer);

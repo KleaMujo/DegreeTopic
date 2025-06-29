@@ -285,14 +285,7 @@
             });
             return;
         }
-        if (!file) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Missing File',
-                text: 'Please enter the assignment file.'
-            });
-            return;
-        }
+
 
         const selectedText = recipientSelect.options[recipientSelect.selectedIndex]?.text || '';
         const nameValue = selectedText.split(' - ')[1] || '';
@@ -300,7 +293,7 @@
         const assignmentDto = {
             studentId: recipientSelect.value,
             degreeTopic: nameValue,
-            dueDate: dueDate,
+            date: dueDate,
             assignmentTitle: title,
             assignmentDescription: description,
             linkUrl: document.getElementById("hiddenLinkUrl").value,

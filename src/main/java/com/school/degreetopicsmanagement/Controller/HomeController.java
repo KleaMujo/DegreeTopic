@@ -43,127 +43,183 @@ public class HomeController {
 
     @Autowired
     private AssignmentRepository assignmentRepository;
+
     @GetMapping("/")
     public ModelAndView homePage(HttpServletRequest httpServletRequest) {
 
         ModelAndView modelAndView = new ModelAndView();
 
+
         if (httpServletRequest.isUserInRole("ROLE_USER")) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
+                modelAndView.setViewName("login");
+                return modelAndView;
+            }
+
             UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
             User user = userRepository.findByUsername(authenticatedUser.getUsername());
 
-            if ("student".equals(user.getRole())) {
-                DegreeTopicRequest degreeTopicRequest = degreeTopicRequestRepository.findByStudentIdAndStatus(user,"ACTIVE");
-                DegreeTopic topic  = degreeTopicRequest.getDegreeTopic();
+            if (user == null || user.getRole() == null) {
+                modelAndView.setViewName("login");
+                return modelAndView;
+            }
 
-                String topicTitle = topic.getTitle();
+            System.out.println("userii " + user.getRole());
+
+            if ("student".equals(user.getRole())) {
+                DegreeTopicRequest degreeTopicRequest = degreeTopicRequestRepository.findByStudentIdAndStatus(user, "ACTIVE");
+
+                DegreeTopic topic = (degreeTopicRequest != null) ? degreeTopicRequest.getDegreeTopic() : null;
                 Long studentId = user.getId();
 
-                // Assignments for that topic
-                List<Assignment> allAssignments = assignmentRepository.findAllByStudentId(user.getId());
-                int totalAssignments = allAssignments.size();
+                if (topic == null) {
+                    modelAndView.addObject("noTopicMessage", "You have not chosen any degree topic yet.");
+                } else {
+                    String topicTitle = topic.getTitle();
 
-                // Answers by this student
-                List<AssignmentAnswer> submittedAnswers = assignmentAnswerRepository.findByStudentId(studentId);
-                int submittedCount = submittedAnswers.size();
+                    List<Assignment> allAssignments = Optional.ofNullable(assignmentRepository.findAllByStudentId(studentId)).orElse(Collections.emptyList());
+                    int totalAssignments = allAssignments.size();
 
-                // Messages (optional logic to count unread if you implement that)
-                List<Message> messages = messageRepository.findAllByMessageFrom(topic.getTeacher().getUsername());
-                int totalMessages = messages.size();
+                    List<AssignmentAnswer> submittedAnswers = Optional.ofNullable(assignmentAnswerRepository.findByStudentId(studentId)).orElse(Collections.emptyList());
+                    int submittedCount = submittedAnswers.size();
 
-                // Progress percentage
-                int progress = totalAssignments > 0 ? (submittedCount * 100) / totalAssignments : 0;
+                    List<Message> messages = (topic.getTeacher() != null)
+                            ? Optional.ofNullable(messageRepository.findAllByMessageFrom(topic.getTeacher().getUsername())).orElse(Collections.emptyList())
+                            : Collections.emptyList();
+                    int totalMessages = messages.size();
 
-                modelAndView.addObject("degreeTopic", topic);
-                modelAndView.addObject("totalAssignments", totalAssignments);
-                modelAndView.addObject("submittedAssignments", submittedCount);
-                modelAndView.addObject("assignmentAnswers", submittedAnswers);
-                modelAndView.addObject("totalMessages", totalMessages);
-                modelAndView.addObject("progressPercent", progress);
+                    int progress = totalAssignments > 0 ? (submittedCount * 100) / totalAssignments : 0;
 
+                    modelAndView.addObject("degreeTopic", topic);
+                    modelAndView.addObject("totalAssignments", totalAssignments);
+                    modelAndView.addObject("submittedAssignments", submittedCount);
+                    modelAndView.addObject("assignmentAnswers", submittedAnswers);
+                    modelAndView.addObject("totalMessages", totalMessages);
+                    modelAndView.addObject("progressPercent", progress);
+                }
 
                 modelAndView.setViewName("/Student/studentDashboard");
-
                 return modelAndView;
+
             } else if ("professor".equals(user.getRole())) {
 
                 long assignedStudents = 0L;
                 long totalTopics = degreeTopicRespository.countByTeacher(user);
-                List <Assignment> assignment = assignmentRepository.findByTeacherId(user.getId());
-                for(Assignment a : assignment) {
-                    List<AssignmentAnswer> assignmentAnswer = assignmentAnswerRepository.findAllByAssignmentId(a.getId());
-                    assignedStudents += assignmentAnswer.size();
-                }
 
+                List<Assignment> assignments = assignmentRepository.findByTeacherId(user.getId());
+                if (assignments != null) {
+                    for (Assignment a : assignments) {
+                        if (a != null) {
+                            List<AssignmentAnswer> assignmentAnswer = assignmentAnswerRepository.findAllByAssignmentId(a.getId());
+                            if (assignmentAnswer != null) {
+                                assignedStudents += assignmentAnswer.size();
+                            }
+                        }
+                    }
+                }
 
                 long totalAssignments = assignmentRepository.countByTeacherId(user.getId());
                 modelAndView.addObject("totalTopics", totalTopics);
                 modelAndView.addObject("assignedStudents", assignedStudents);
                 modelAndView.addObject("totalAssignments", totalAssignments);
 
-                List<DegreeTopicRequest> requests = degreeTopicRequestRepository.findActiveByTeacherId("active",user.getId());
+                List<DegreeTopicRequest> requests = degreeTopicRequestRepository.findActiveByTeacherId("active", user.getId());
+                if (requests == null) requests = new ArrayList<>();
 
                 Map<Long, StudentAssignmentSummary> summaryMap = new HashMap<>();
-
                 for (DegreeTopicRequest req : requests) {
-                    DegreeTopic topic = req.getDegreeTopic();
-                    if (topic.getTeacher().getId().equals(user.getId())) {
+                    if (req != null && req.getDegreeTopic() != null && req.getStudent() != null &&
+                            req.getDegreeTopic().getTeacher() != null &&
+                            user.getId().equals(req.getDegreeTopic().getTeacher().getId())) {
+
                         Long studentId = req.getStudent().getId();
                         String studentName = req.getStudent().getUsername();
 
                         int totalAssignments1 = assignmentRepository.countByTeacherIdAndStudentId(user.getId(), studentId);
                         int totalResponses = assignmentAnswerRepository.countByStudentId(studentId);
 
+                        summaryMap.put(studentId, new StudentAssignmentSummary(studentId, studentName, totalAssignments1, totalResponses));
+                    }
+                }
+                modelAndView.addObject("summaryMap", summaryMap);
 
-                        summaryMap.put(studentId, new StudentAssignmentSummary(studentId,studentName, totalAssignments1, totalResponses));
-                        modelAndView.addObject("summaryMap", summaryMap);
+                // Active Count Map
+                Map<Long, Integer> activeCountMap = new HashMap<>();
+                for (DegreeTopicRequest request : requests) {
+                    if (request != null && request.getDegreeTopic() != null) {
+                        Long topicId = request.getDegreeTopic().getId();
+                        activeCountMap.put(topicId, activeCountMap.getOrDefault(topicId, 0) + 1);
                     }
                 }
 
-                Map<Long, Integer> activeCountMap = new HashMap<>();
-
-                for (DegreeTopicRequest request : requests) {
-                    Long topicId = request.getDegreeTopic().getId();
-                    activeCountMap.put(topicId, activeCountMap.getOrDefault(topicId, 0) + 1);
-                }
-
                 List<TopicFillSummary> topicSummaries = new ArrayList<>();
-
-                List <DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
-                for (DegreeTopic topic : degreeTopicList) {
-                    int active = activeCountMap.getOrDefault(topic.getId(), 0);
-                     topicSummaries.add(new TopicFillSummary(topic.getTitle(), active));
+                List<DegreeTopic> degreeTopicList = degreeTopicRespository.findAllByTeacherId(user.getId());
+                if (degreeTopicList != null) {
+                    for (DegreeTopic topic : degreeTopicList) {
+                        if (topic != null) {
+                            int active = activeCountMap.getOrDefault(topic.getId(), 0);
+                            topicSummaries.add(new TopicFillSummary(topic.getTitle(), active));
+                        }
+                    }
                 }
                 modelAndView.addObject("topicSummaries", topicSummaries);
 
-
-
-
-                 Map<Long, Integer> interestCountMap = new HashMap<>();
-
+                // Interest Count Map
+                Map<Long, Integer> interestCountMap = new HashMap<>();
                 for (DegreeTopicRequest req : requests) {
-                    Long topicId = req.getDegreeTopic().getId();
-                    interestCountMap.put(topicId, interestCountMap.getOrDefault(topicId, 0) + 1);
+                    if (req != null && req.getDegreeTopic() != null) {
+                        Long topicId = req.getDegreeTopic().getId();
+                        interestCountMap.put(topicId, interestCountMap.getOrDefault(topicId, 0) + 1);
+                    }
                 }
 
-                 List<TopicFillSummary> interestSummaries = new ArrayList<>();
-
+                List<TopicFillSummary> interestSummaries = new ArrayList<>();
                 List<DegreeTopic> degreeTopics = degreeTopicRespository.findAllByTeacherId(user.getId());
-                for (DegreeTopic topic : degreeTopics) {
-                    int count = interestCountMap.getOrDefault(topic.getId(), 0);
-                    interestSummaries.add(new TopicFillSummary(topic.getTitle(), count));
+                if (degreeTopics != null) {
+                    for (DegreeTopic topic : degreeTopics) {
+                        if (topic != null) {
+                            int count = interestCountMap.getOrDefault(topic.getId(), 0);
+                            interestSummaries.add(new TopicFillSummary(topic.getTitle(), count));
+                        }
+                    }
                 }
 
                 modelAndView.addObject("interestSummaries", interestSummaries);
-
-
                 modelAndView.setViewName("/Teacher/professorDashboard");
-
-            }
-
                 return modelAndView;
+            } else if ("admin".equals(user.getRole())) {
+                System.out.println("aaa");
+                List<DegreeTopic> degreeTopics = degreeTopicRespository.findAll();
+
+                List<DegreeTopicRequest> degreeTopicRequests = degreeTopicRequestRepository.findAllByDegreeTopicIn(degreeTopics);
+
+                long totalTopics = degreeTopicRespository.count();
+                long totalRequests = degreeTopicRequestRepository.count();
+                long totalStudents = userRepository.countByRole("student");
+                long totalProfessors = userRepository.countByRole("professor");
+
+                modelAndView.addObject("totalTopics", totalTopics);
+                modelAndView.addObject("totalRequests", totalRequests);
+                modelAndView.addObject("totalStudents", totalStudents);
+                modelAndView.addObject("totalProfessors", totalProfessors);
+
+                List<User> studentUsers =  userRepository.findAllByRole("student");
+                List<User> professorsUsers =  userRepository.findAllByRole("professor");
+
+                Integer currentYear = LocalDate.now().getYear();
+                modelAndView.addObject("year",currentYear);
+                modelAndView.addObject("studentUsers", studentUsers);
+                modelAndView.addObject("professorsUsers", professorsUsers);
+                modelAndView.addObject("degreeTopics", degreeTopics);
+                modelAndView.addObject("degreeTopicRequests", degreeTopicRequests);
+
+                modelAndView.setViewName("/Admin/adminDashboard");
             }
+            System.out.println("User has unknown role: " + user.getRole());
+            return modelAndView;
+
+        }
 
 
         modelAndView.setViewName("login");
