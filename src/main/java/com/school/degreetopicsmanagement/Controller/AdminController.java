@@ -117,7 +117,11 @@ public class AdminController {
         Map<Assignment, AssignmentAnswer> assignmentAnswerMap = new LinkedHashMap<>();
         for (Assignment a : assignments) {
             AssignmentAnswer answer = assignmentAnswerRepository.findByAssignmentId(a.getId());
+            String degreeTopicFolderName = a.getDegreeTopic();
+            String getPropertyPicturesPath =  "/attachments/" + degreeTopicFolderName+ "/" + answer.getFileName();
             assignmentAnswerMap.put(a, answer); // answer can be null, which is fine
+            modelAndView.addObject("getPropertyPicturesPath", getPropertyPicturesPath);
+
         }
 
         modelAndView.addObject("assignmentAnswerMap", assignmentAnswerMap);

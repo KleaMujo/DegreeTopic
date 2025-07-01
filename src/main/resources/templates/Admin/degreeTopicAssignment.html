@@ -505,7 +505,7 @@
                                             <img th:src="@{${entry.key.getPropertyPicturesPath()}}"
                                                  class="assignment-image img-fluid"
                                                  alt="Assignment Attachment"
-                                                 style="max-width: 100%; height: auto; margin-bottom: 10px;"/>
+                                                 style="max-width: 36%; height: auto; margin-bottom: 10px;"/>
                                             <br>
                                             <a th:href="@{${entry.key.getPropertyPicturesPath()}}"
                                                class="download-btn btn btn-sm btn-outline-primary"
@@ -571,9 +571,42 @@
                                         Submission Date
                                     </div>
                                     <div class="field-content" th:text="${entry.value.date}">
-                                        March 28, 2024
+
                                     </div>
                                 </div>
+                                <div th:if="${entry.value != null}" class="resources-section">
+
+                                    <div th:if="${entry.value.fileName != null}" class="resource-item">
+
+                                        <!-- Image Preview -->
+                                        <div th:if="${#strings.endsWith(entry.value.fileName.toLowerCase(), '.jpg')
+                  || #strings.endsWith(entry.value.fileName.toLowerCase(), '.jpeg')
+                  || #strings.endsWith(entry.value.fileName.toLowerCase(), '.png')
+                  || #strings.endsWith(entry.value.fileName.toLowerCase(), '.gif')}">
+
+                                            <img th:src="@{${getPropertyPicturesPath}}"
+                                                 class="assignment-image img-fluid"
+                                                 alt="Assignment Attachment"
+                                                 style="max-width: 36%; height: auto; margin-bottom: 10px;" />
+                                            <br/>
+                                            <a th:href="@{${entry.value.getPropertyPicturesPath()}}"
+                                               class="download-btn btn btn-sm btn-outline-primary"
+                                               download>
+                                                <i class="fas fa-download"></i> Shkarko Imazhin
+                                            </a>
+                                        </div>
+
+                                        <!-- PDF Preview -->
+                                        <div th:if="${#strings.endsWith(entry.value.fileName.toLowerCase(), '.pdf')}">
+                                            <iframe th:src="@{${entry.value.getPropertyPicturesPath()}}"
+                                                    width="100%" height="500px"
+                                                    style="border: 1px solid #ddd; border-radius: 4px;">
+                                            </iframe>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </section>
 
                             <!-- No Answer Section -->

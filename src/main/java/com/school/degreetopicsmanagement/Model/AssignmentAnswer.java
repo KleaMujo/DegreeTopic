@@ -43,6 +43,8 @@ public class AssignmentAnswer {
     @Column(name="degreeTopic")
     private String degreeTopic;
 
+
+
     public String getPropertyPicturesPath(){
         return "/attachments/" + getDegreeTopic() + "/" + this.fileName;
     }

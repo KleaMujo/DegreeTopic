@@ -418,7 +418,7 @@
             <div th:if="${assignment.getLinkUrl() != null}" class="resource-item">
                 <a th:href="${assignment.getLinkUrl()}" class="resource-link" target="_blank">
                     <i class="fas fa-external-link-alt"></i>
-                    <span>External Resource Link</span>
+                    <span th:text="${assignment.getLinkText()}"> </span>
                 </a>
             </div>
 

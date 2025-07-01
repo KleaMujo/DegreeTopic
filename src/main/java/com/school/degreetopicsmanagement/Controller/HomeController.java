@@ -59,9 +59,23 @@ public class HomeController {
 
             UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
             User user = userRepository.findByUsername(authenticatedUser.getUsername());
+            System.out.println(user.getRole() + " roli " );
 
             if (user == null || user.getRole() == null) {
                 modelAndView.setViewName("login");
+                return modelAndView;
+            }
+            else if ("admin".equals(user.getRole())) {
+                long totalUsers = userRepository.count();
+                long totalTopics = degreeTopicRespository.count();
+                long totalAssignments = assignmentRepository.count();
+
+
+                modelAndView.addObject("totalUsers", totalUsers);
+                modelAndView.addObject("totalTopics", totalTopics);
+                modelAndView.addObject("totalAssignments", totalAssignments);
+
+                modelAndView.setViewName("/Admin/adminDashboard");
                 return modelAndView;
             }
 

@@ -269,9 +269,14 @@ public class AssignmentController {
 
         Path baseUploadPath = Paths.get("/home/data/DegreeTopic/");
 
-        // Clean and sanitize the degree topic to use as folder name
-        String degreeTopicFolderName = assignment.getDegreeTopic();
+
+
+        String degreeTopicFolderName = assignmentDto.getDegreeTopic();
+
+        degreeTopicFolderName = degreeTopicFolderName.replaceAll("[:\\\\/*?|<>]", "-");
+
         Path uploadPath = baseUploadPath.resolve(degreeTopicFolderName);
+
 
         String fileName = null;  // inicializo me null
 

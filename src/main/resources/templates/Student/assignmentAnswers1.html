@@ -385,6 +385,32 @@
             max-width: 800px;
             margin: 0 auto;
         }
+
+        @media print {
+            body {
+                font-family: 'Times New Roman', serif;
+                color: #000;
+            }
+            .status-card, .content-section {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            .section-title {
+                font-weight: bold;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            .assignment-image {
+                max-width: 100%;
+                height: auto;
+            }
+            .download-btn, .btn {
+                display: none;
+            }
+        }
+
+
     </style>
 </head>
 <body>
@@ -512,10 +538,8 @@
             </div>
 
             <div class="download-section mt-4">
-                <button type="button" class="btn btn-outline-primary btn-sm" onclick="downloadAssignmentFile()">
-                    <i class="fas fa-file-pdf"></i>
-                    Download Submission (PDF)
-                </button>
+                <button onclick="downloadAsPDF()" class="btn btn-success">Download Formal PDF</button>
+
             </div>
 
 
@@ -527,58 +551,41 @@
 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-    function downloadAssignmentFile() {
-        // Get the element to convert
-        const element = document.querySelector('.academic-card');
+    async function downloadAsPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const content = document.querySelector('.academic-body');
 
-        // Optimize PDF options for single page
-        const opt = {
-            margin: [10, 10, 10, 10],  // Top, Right, Bottom, Left
-            filename: 'assignment_submission_' +
-                document.querySelector('.assignment-title').textContent.trim() + '.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: {
-                scale: 1,  // Lower scale for smaller file size
-                logging: false,
-                useCORS: true,
-                scrollY: 0  // Prevent scroll issues
-            },
-            jsPDF: {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait',
-                compress: true
-            },
-            pagebreak: {
-                mode: 'avoid-all'  // Force single page
+        await html2canvas(content, {
+            scale: 2,         // higher resolution
+            useCORS: true     // enable if you have images from other domains
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
             }
-        };
 
-        // Temporary show loading state
-        const btn = document.querySelector('.download-section button');
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
-        btn.disabled = true;
-
-        // Generate PDF
-        html2pdf()
-            .set(opt)
-            .from(element)
-            .save()
-            .then(() => {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            })
-            .catch(err => {
-                console.error('PDF generation failed:', err);
-                btn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed!';
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                }, 2000);
-            });
+            doc.save('assignment-submission.pdf');
+        });
     }
 </script>
 </body>
+
+
 </html>
